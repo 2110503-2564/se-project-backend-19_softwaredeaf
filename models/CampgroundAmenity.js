@@ -1,15 +1,23 @@
 const mongoose = require('mongoose');
 
 const campgroundAmenitySchema = new mongoose.Schema({
-  campgroundId: { type: mongoose.Schema.Types.ObjectId, ref: 'Campground', required: true },
-  amenityTypeId: { type: mongoose.Schema.Types.ObjectId, ref: 'AmenityType', required: true },
+  campgroundId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Campground',
+    required: true
+  },
+
+  name: { type: String, required: true },
+  description: { type: String },
+  image: { type: String },
+  quantity: { type: Number, default: 1 },
+  price: { type: Number, default: 0 },
+
   status: {
     type: String,
     enum: ['available', 'maintenance', 'unavailable'],
     default: 'available'
-  },
-  price: { type: Number, default: 0 }, // optional
-  quantity: { type: Number, default: 1 } // optional
+  }
 }, {
   timestamps: true
 });
