@@ -1,20 +1,22 @@
 const Amenity = require("../models/CampgroundAmenity");
+const mongoose = require("mongoose"); // Import mongoose for error checking
 
 exports.getAmenity = async (req, res, next) => {
-  const amenity = await Amenity.findOne({ campgroundId: req.params.campId });
-  if (!amenity) {
+  try {
+    const amenity = await Amenity.findOne({ campgroundId: req.params.campId });
+    res.status(200).json({ success: true, data: amenity });
+  } catch (error) {
     return res.status(404).json({
       success: false,
-      message: "Amenity not found for this campground",
+      message: "Amenity not found",
     });
   }
-
-  res.status(200).json({ success: true, data: amenity });
 };
 
 exports.addAmenities = async (req, res, next) => {
-  let Amenity = await Amenity.findById(req.params.id);
-  if (!Amenity) {
-    return res.status(400).json({ success: false });
-  }
+  const amenity = await Amenity.create(req.body);
+  res.status(201).json({
+    success: true,
+    data: amenity,
+  });
 };
