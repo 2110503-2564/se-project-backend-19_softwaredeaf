@@ -15,6 +15,8 @@ const BookingSchema = new mongoose.Schema({
         ref: 'Camp',
         required: true
     },
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, required: true },
     createdAt: {
         type: Date,
         default: Date.now
