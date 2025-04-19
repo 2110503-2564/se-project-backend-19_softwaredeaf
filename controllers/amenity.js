@@ -1,5 +1,6 @@
 const Amenity = require("../models/CampgroundAmenity");
 const mongoose = require("mongoose"); // Import mongoose for error checking
+const Camp = require("../models/Camp");
 
 // @desc    Get all campground amenity
 // @route   GET /api/v1/camps/:campId/amenities
@@ -7,7 +8,9 @@ const mongoose = require("mongoose"); // Import mongoose for error checking
 
 exports.getAmenity = async (req, res, next) => {
   try {
-    const amenity = await Amenity.find({ campgroundId: req.params.campId });
+    const campId = req.params.campId;
+
+    const amenity = await Amenity.find({ campgroundId: campId });
     res.status(200).json({ success: true, data: amenity });
   } catch (error) {
     return res.status(404).json({
@@ -21,11 +24,24 @@ exports.getAmenity = async (req, res, next) => {
 // @route   POST /api/v1/camps/:campId/amenities
 // @access  Private
 exports.addAmenities = async (req, res, next) => {
-  const amenity = await Amenity.create(req.body);
-  res.status(201).json({
-    success: true,
-    data: amenity,
-  });
+  try {
+    const campId = req.params.campId;
+    const camp = await Camp.findById(campId);
+    const owner = camp.owner;
+    if (owner.toString() !== req.user.id && req.user.role !== "admin") {
+      return res.status(401).json({
+        success: false,
+        message: `User ${req.user.id} is not authorized to add this amenity`,
+      });
+    }
+    const amenity = await Amenity.create(req.body);
+    res.status(201).json({
+      success: true,
+      data: amenity,
+    });
+  } catch (err) {
+    return res.status(400).json({ success: false });
+  }
 };
 
 // @desc    Update amenities
@@ -34,6 +50,16 @@ exports.addAmenities = async (req, res, next) => {
 
 exports.updateAmenity = async (req, res, next) => {
   try {
+    const campId = req.params.campId;
+    const camp = await Camp.findById(campId);
+    const owner = camp.owner;
+    if (owner.toString() !== req.user.id && req.user.role !== "admin") {
+      return res.status(401).json({
+        success: false,
+        message: `User ${req.user.id} is not authorized to add this amenity`,
+      });
+    }
+
     const amenity = await Amenity.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -59,6 +85,15 @@ exports.updateAmenity = async (req, res, next) => {
 
 exports.deleteAmenity = async (req, res, next) => {
   try {
+    const campId = req.params.campId;
+    const camp = await Camp.findById(campId);
+    const owner = camp.owner;
+    if (owner.toString() !== req.user.id && req.user.role !== "admin") {
+      return res.status(401).json({
+        success: false,
+        message: `User ${req.user.id} is not authorized to add this amenity`,
+      });
+    }
     const amenity = await Amenity.findById(req.params.id);
     if (!amenity) {
       return res.status(400).json({
