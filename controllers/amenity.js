@@ -10,7 +10,9 @@ exports.getAmenity = async (req, res, next) => {
   try {
     const campId = req.params.campId;
 
-    const amenity = await Amenity.find({ campgroundId: campId });
+    const amenity = await Amenity.find({ campgroundId: campId })
+      .populate('campgroundId');
+
     res.status(200).json({ success: true, data: amenity });
   } catch (error) {
     return res.status(404).json({
@@ -19,6 +21,7 @@ exports.getAmenity = async (req, res, next) => {
     });
   }
 };
+
 
 // @desc    Create new campground amenity
 // @route   POST /api/v1/camps/:campId/amenities
