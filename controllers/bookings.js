@@ -131,10 +131,25 @@ exports.updateBooking = async (req,res,next) => {
         }
 
         //Make sure user is the booking owner
-        if(booking.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        const campground = await Camp.findById(booking.camp.id);
+
+        if(!campground) {
+            return res.status(404).json({
+                success: false,
+                message: `No campground with the id of ${booking.camp.id}`
+            });
+        }
+        
+        if(req.user.role === 'user' && booking.user.toString() !== req.user.id)
+        {
             return res.status(401).json({
                 success: false,
-                message: `User ${req.user.id} is not authorized to update this booking`
+                message: `User ${req.user.id} is not authorized to update this bootcamp`
+            });
+        }else if(req.user.role === 'owner' && campground.owner.toString() !== req.user.id && booking.user.toString() !== req.user.id){
+            return res.status(401).json({
+                success: false,
+                message: `User ${req.user.id} is not authorized to update this bootcamp`
             });
         }
 
@@ -171,7 +186,22 @@ exports.deleteBooking = async (req,res,next) => {
         }
 
         //Make sure user is the booking owner
-        if(booking.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        const campground = await Camp.findById(booking.camp.id);
+
+        if(!campground) {
+            return res.status(404).json({
+                success: false,
+                message: `No campground with the id of ${booking.camp.id}`
+            });
+        }
+        
+        if(req.user.role === 'user' && booking.user.toString() !== req.user.id)
+        {
+            return res.status(401).json({
+                success: false,
+                message: `User ${req.user.id} is not authorized to delete this bootcamp`
+            });
+        }else if(req.user.role === 'owner' && campground.owner.toString() !== req.user.id && booking.user.toString() !== req.user.id){
             return res.status(401).json({
                 success: false,
                 message: `User ${req.user.id} is not authorized to delete this bootcamp`
