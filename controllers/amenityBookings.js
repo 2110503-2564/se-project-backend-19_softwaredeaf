@@ -96,28 +96,37 @@ exports.getAmenityBooking = async (req, res, next) => {
   }
 };
 
-// @desc    Add new amenity booking
+// @desc    Add new amenity booking (with overbooking prevention)
 // @route   POST /api/v1/bookings/:bookingId/amenities/:amenityId/amenitybookings
 // @access  Private
 exports.addAmenityBooking = async (req, res, next) => {
   try {
     const campgroundAmenityId = req.params.amenityId;
     const bookingId = req.params.bookingId;
+    const { amount, startDate, endDate } = req.body;
 
-    // 1. Check if camp exists
-    const booking = await Booking.findById(bookingId);
-    if (!booking) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Booking not found" });
+    // 🛑 Validate date range
+    if (new Date(startDate) > new Date(endDate)) {
+      return res.status(400).json({
+        success: false,
+        message: "Start date must be on or before end date",
+      });
     }
 
-    // 2. Check if the campgroundAmenityId belongs to the camp
+    // 1. Check if booking exists
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    // 2. Check if amenity belongs to this campground
     const amenity = await CampgroundAmenity.findOne({
       _id: campgroundAmenityId,
       campgroundId: booking.camp.id,
     });
-
     if (!amenity) {
       return res.status(400).json({
         success: false,
@@ -125,14 +134,28 @@ exports.addAmenityBooking = async (req, res, next) => {
       });
     }
 
-    // 3. Create Amenity Booking
+    // 3. Check availability (overbooking prevention)
+    const availability = await getAvailableAmenityQuantity(
+      campgroundAmenityId,
+      new Date(startDate),
+      new Date(endDate)
+    );
+
+    if (amount > availability.available) {
+      return res.status(400).json({
+        success: false,
+        message: `Not enough availability. Requested: ${amount}, Available: ${availability.available}`,
+      });
+    }
+
+    // 4. Create booking
     const amenityBooking = await AmenityBooking.create({
       userId: req.user.id,
       campgroundBookingId: bookingId,
-      campgroundAmenityId: campgroundAmenityId,
-      amount: req.body.amount,
-      startDate: req.body.startDate,
-      endDate: req.body.endDate,
+      campgroundAmenityId,
+      amount,
+      startDate,
+      endDate,
     });
 
     res.status(201).json({
@@ -145,30 +168,80 @@ exports.addAmenityBooking = async (req, res, next) => {
   }
 };
 
-//@desc     Update amenity booking
-//@route    PUT /api/v1/amenitybookings/:id
-//@access   Private
+
+// @desc    Update amenity booking (with overbooking prevention)
+// @route   PUT /api/v1/amenitybookings/:id
+// @access  Private
 exports.updateAmenityBooking = async (req, res, next) => {
   try {
-    const amenitybooking = await AmenityBooking.findByIdAndUpdate(
-      req.params.id,
-      { ...req.body },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const { amount, startDate, endDate, campgroundAmenityId } = req.body;
 
-    if (!amenitybooking) {
+    // 🛑 1. Validate date range
+    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+      return res.status(400).json({
+        success: false,
+        message: "Start date must be on or before end date",
+      });
+    }
+
+    // 🧾 2. Find existing booking to preserve context
+    const existing = await AmenityBooking.findById(req.params.id);
+    if (!existing) {
       return res.status(404).json({
         success: false,
         message: `No booking with the id of ${req.params.id}`,
       });
     }
 
+    const newAmenityId = campgroundAmenityId || existing.campgroundAmenityId;
+    const newStart = new Date(startDate || existing.startDate);
+    const newEnd = new Date(endDate || existing.endDate);
+    const newAmount = amount || existing.amount;
+
+    // 🧠 3. Recalculate availability **excluding current booking**
+    const allBookings = await AmenityBooking.aggregate([
+      {
+        $match: {
+          campgroundAmenityId: new mongoose.Types.ObjectId(newAmenityId),
+          _id: { $ne: existing._id }, // Exclude current booking
+          $or: [
+            { startDate: { $lte: newEnd }, endDate: { $gte: newStart } },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalBooked: { $sum: "$amount" },
+        },
+      },
+    ]);
+
+    const totalOtherBooked = allBookings[0]?.totalBooked || 0;
+    const amenity = await CampgroundAmenity.findById(newAmenityId);
+    if (!amenity) {
+      return res.status(404).json({ success: false, message: "Amenity not found" });
+    }
+
+    const available = Math.max(0, amenity.quantity - totalOtherBooked);
+
+    if (newAmount > available) {
+      return res.status(400).json({
+        success: false,
+        message: `Not enough availability. Requested: ${newAmount}, Available: ${available}`,
+      });
+    }
+
+    // 🛠️ 4. Proceed with update
+    const updated = await AmenityBooking.findByIdAndUpdate(
+      req.params.id,
+      { ...req.body },
+      { new: true, runValidators: true }
+    );
+
     res.status(200).json({
       success: true,
-      data: amenitybooking,
+      data: updated,
     });
   } catch (err) {
     console.error(err.stack);
@@ -178,6 +251,7 @@ exports.updateAmenityBooking = async (req, res, next) => {
     });
   }
 };
+
 
 //@desc     Delete amenity booking
 //@route    DELETE /api/v1/amenitybookings/:id
