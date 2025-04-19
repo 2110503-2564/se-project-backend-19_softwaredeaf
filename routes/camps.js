@@ -11,7 +11,7 @@ const {protect,authorize} = require('../middleware/auth');
 
 //re-route into other resource router
 router.use('/:campid/bookings/',bookingRouter);
-router.use(':campId/amenities/:amenityId/amenitybookings',amenityBookingRouter);
+router.use('/:campId/amenities/:amenityId/amenitybookings',amenityBookingRouter);
 
 
 router.route('/').get(getCamps).post(protect, authorize('admin'), createCamp);
