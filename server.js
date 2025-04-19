@@ -14,6 +14,8 @@ const camps = require("./routes/camps");
 const auth = require("./routes/auth");
 const bookings = require("./routes/bookings");
 const amenities = require("./routes/amenities");
+const amenityBookings = require('./routes/amenityBookings');
+
 
 const app = express();
 
@@ -28,6 +30,8 @@ app.use("/api/v1/camps", camps);
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/bookings", bookings);
 app.use("/api/v1/camps/:campId/amenities", amenities);
+app.use('/api/v1/amenitybookings', amenityBookings);
+
 
 const PORT = process.env.PORT || 5003;
 

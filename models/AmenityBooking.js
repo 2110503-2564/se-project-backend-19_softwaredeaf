@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const AmenityBookingSchema = new mongoose.Schema({
     campgroundBookingId: {
       type: mongoose.Schema.Types.ObjectId,
