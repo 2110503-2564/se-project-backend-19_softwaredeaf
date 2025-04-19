@@ -5,6 +5,7 @@ const Camp = require('../models/Camp.js');
 //@route    GET /api/v1/camps
 //@access   Public
 exports.getCamps = async(req,res,next)=>{
+    
     let query;
 
     //Copy req.query
@@ -114,14 +115,28 @@ exports.createCamp = async(req,res,next)=>{
 //@access   Private
 exports.updateCamp = async(req,res,next)=>{
     try {
-        const camp = await Camp.findByIdAndUpdate(req.params.id, req.body, {
+        
+        let camp = await Camp.findById(req.params.id);
+        
+            if(!camp) {
+                return res.status(404).json({
+                    success: false,
+                    message: `No campground with the id of ${req.params.id}`
+                });
+            }
+        
+            //Make sure user is the booking owner
+            if(camp.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+                return res.status(401).json({
+                    success: false,
+                    message: `User ${req.user.id} is not authorized to update this booking`
+                });
+            }
+        
+        camp = await Camp.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators:true
         });
-
-        if(!camp) {
-            return res.status(400).json({success:false});
-        }
 
         res.status(200).json({
             success:true,
@@ -137,14 +152,23 @@ exports.updateCamp = async(req,res,next)=>{
 //@access   Private
 exports.deleteCamp = async(req,res,next)=>{
     try {
-        const camp = await Camp.findById(req.params.id);
+        let camp = await Camp.findById(req.params.id);
+        
+            if(!camp) {
+                return res.status(404).json({
+                    success: false,
+                    message: `No campground with the id of ${req.params.id}`
+                });
+            }
+        
+            //Make sure user is the booking owner
+            if(camp.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+                return res.status(401).json({
+                    success: false,
+                    message: `User ${req.user.id} is not authorized to update this booking`
+                });
+            }
 
-        if(!camp) {
-            return res.status(400).json({
-                success:false,
-                message:`Camp not found with id of ${req.params.id}`
-            });
-        }
         await Booking.deleteMany({camp: req.params.id});
         await Camp.deleteOne({_id: req.params.id});
 
