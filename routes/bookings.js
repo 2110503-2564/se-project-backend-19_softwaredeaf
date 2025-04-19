@@ -5,6 +5,10 @@ const router = express.Router({mergeParams:true});
 
 const {protect, authorize} = require('../middleware/auth');
 
+const amenityBookingRouter = require('./amenityBookings');
+
+router.use('/:bookingId/amenities/:amenityId/amenitybookings',amenityBookingRouter);
+
 router.route('/')
     .get(protect, getBookings)
     .post(protect, authorize('admin','user','owner'), addBooking);

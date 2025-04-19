@@ -3,6 +3,7 @@ const Camp = require("../models/Camp");
 const CampgroundAmenity = require("../models/CampgroundAmenity");
 const Booking = require("../models/Booking");
 const { updateAmenity } = require("./amenity");
+const mongoose = require("mongoose"); 
 
 // @desc    Get all amenity bookings
 // @route   GET /api/v1/amenitybookings
@@ -50,28 +51,28 @@ exports.getAmenityBooking = async (req, res, next) => {
 };
 
 // @desc    Add new amenity booking
-// @route   POST /api/v1/camps/:campId/amenities/:amenityId/amenitybookings
+// @route   POST /api/v1/bookings/:bookingId/amenities/:amenityId/amenitybookings
 // @access  Private
 exports.addAmenityBooking = async (req, res, next) => {
   try {
     const campgroundAmenityId = req.params.amenityId;
-    const campId = req.params.campId;
+    const bookingId = req.params.bookingId;
 
     // 1. Check if camp exists
-    const camp = await Camp.findById(campId);
-    console.log("dswdcedcwerfwerfcwercampId");
-    console.log(campId);
+    const booking = await Booking.findById(bookingId);
+    //console.log("dswdcedcwerfwerfcwercampId");
+    //console.log(campId);
 
-    if (!camp) {
+    if (!booking) {
       return res
         .status(404)
-        .json({ success: false, message: "Camp not found" });
+        .json({ success: false, message: "Booking not found" });
     }
 
     // 2. Check if the campgroundAmenityId belongs to the camp
     const amenity = await CampgroundAmenity.findOne({
       _id: campgroundAmenityId,
-      campgroundId: campId, // 👈 ชื่อ field ที่ใช้อ้างอิงแคมป์ใน CampgroundAmenity
+      campgroundId: booking.camp.id, // 👈 ชื่อ field ที่ใช้อ้างอิงแคมป์ใน CampgroundAmenity
     });
 
     if (!amenity) {
@@ -83,12 +84,12 @@ exports.addAmenityBooking = async (req, res, next) => {
 
     // 3. Create Amenity Booking
     const amenityBooking = await AmenityBooking.create({
-      userId: "6615dbec06687492895ebfd0", // หรือ req.user._id ถ้าใช้ _id
-      campgroundBookingId: "6615dbec06687492895ebfd0", // จาก URL /:bookingId/amenitybooking
-      campgroundAmenityId: "68031cf782e7300ae6e6bbe7",
-      amount: 2,
-      startDate: "2025-04-25T12:00:00.000Z",
-      endDate: "2025-04-26T12:00:00.000Z",
+      userId: req.user.id,
+      campgroundBookingId: bookingId, // จาก URL /:bookingId/amenitybooking
+      campgroundAmenityId: campgroundAmenityId,
+      amount: req.body.amount,
+      startDate: req.body.startDate,
+      endDate: req.body.endDate
     });
 
     res.status(201).json({
