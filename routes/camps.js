@@ -14,7 +14,7 @@ router.use('/:campid/bookings/',bookingRouter);
 router.use('/:campId/amenities/:amenityId/amenitybookings',amenityBookingRouter);
 
 
-router.route('/').get(getCamps).post(protect, authorize('admin'), createCamp);
-router.route('/:id').get(getCamp).put(protect, authorize('admin'), updateCamp).delete(protect, authorize('admin'), deleteCamp);
+router.route('/').get(getCamps).post(protect, authorize('admin', 'owner'), createCamp);
+router.route('/:id').get(getCamp).put(protect, authorize('admin', 'owner'), updateCamp).delete(protect, authorize('admin', 'owner'), deleteCamp);
 
 module.exports = router;
