@@ -3,7 +3,7 @@ const mongoose = require("mongoose"); // Import mongoose for error checking
 
 exports.getAmenity = async (req, res, next) => {
   try {
-    const amenity = await Amenity.findOne({ campgroundId: req.params.campId });
+    const amenity = await Amenity.find({ campgroundId: req.params.campId });
     res.status(200).json({ success: true, data: amenity });
   } catch (error) {
     return res.status(404).json({
