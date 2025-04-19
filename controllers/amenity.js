@@ -13,11 +13,22 @@ exports.getAmenity = async (req, res, next) => {
     const amenity = await Amenity.find({ campgroundId: campId })
       .populate('campgroundId');
 
-    res.status(200).json({ success: true, data: amenity });
+      console.log(amenity);
+
+      if(amenity.length === 0){
+        res.status(404).json({
+          success: false,
+          message: "Amenity not found",
+        });
+      }else{
+        res.status(200).json({ success: true, data: amenity });
+      }
+
   } catch (error) {
-    return res.status(404).json({
+    console.log(error);
+    return res.status(400).json({
       success: false,
-      message: "Amenity not found",
+      message: error,
     });
   }
 };
