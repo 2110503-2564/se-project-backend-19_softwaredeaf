@@ -3,7 +3,6 @@ const {getCamps, getCamp, createCamp, updateCamp, deleteCamp} = require('../cont
 
 //include other resource routers
 const bookingRouter = require('./bookings');
-const amenityBookingRouter = require('./amenityBookings');
 
 const router = express.Router();
 
@@ -11,7 +10,7 @@ const {protect,authorize} = require('../middleware/auth');
 
 //re-route into other resource router
 router.use('/:campid/bookings/',bookingRouter);
-router.use('/:campId/amenities/:amenityId/amenitybookings',amenityBookingRouter);
+
 
 
 router.route('/').get(getCamps).post(protect, authorize('admin', 'owner'), createCamp);
