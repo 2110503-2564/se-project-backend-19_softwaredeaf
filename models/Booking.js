@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
 
 const BookingSchema = new mongoose.Schema({
-    bookingDate: {
-        type: Date,
-        required: true
-    },
     user:{
         type: mongoose.Schema.ObjectId,
         ref: 'User',
@@ -13,6 +9,14 @@ const BookingSchema = new mongoose.Schema({
     camp:{
         type: mongoose.Schema.ObjectId,
         ref: 'Camp',
+        required: true
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    surname: {
+        type: String,
         required: true
     },
     startDate: { type: Date, required: true },
