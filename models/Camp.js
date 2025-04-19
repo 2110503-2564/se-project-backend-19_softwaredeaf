@@ -31,6 +31,11 @@ const CampSchema = new mongoose.Schema({
     region:{
         type: String,
         required: [true,'Please add a region']
+    },
+    userId: { 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
 }, {
     toJSON: {virtuals: true},
