@@ -1,4 +1,4 @@
-const Amenity = require("../models/AmenityItem");
+const Amenity = require("../models/CampgroundAmenity");
 
 exports.getAmenity = async (req, res, next) => {
   const amenity = await Amenity.findO; // filter by campgroundI
@@ -11,7 +11,7 @@ exports.getAmenity = async (req, res, next) => {
   res.status(200).json({ success: true, data: amenity });
 };
 
-exports.addAmenitie = async (req, res, next) => {
+exports.addAmenities = async (req, res, next) => {
   let Amenity = await Amenity.findById(req.params.id);
   if (!Amenity) {
     return res.status(400).json({ success: false });

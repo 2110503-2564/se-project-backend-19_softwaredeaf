@@ -1,6 +1,7 @@
 const Booking = require('../models/Booking');
 const Camp = require('../models/Camp');
 
+
 //@desc     Get all bookings
 //@route    GET /api/v1/bookings
 //@access   Public
