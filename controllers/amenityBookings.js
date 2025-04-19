@@ -3,12 +3,58 @@ const Camp = require("../models/Camp");
 const CampgroundAmenity = require("../models/CampgroundAmenity");
 const Booking = require("../models/Booking");
 const { updateAmenity } = require("./amenity");
-const mongoose = require("mongoose"); 
+const mongoose = require("mongoose");
+
+/**
+ * Get total booked amount for an amenity within a date range (overlapping)
+ */
+const getAmenityBookedAmount = async (campgroundAmenityId, startDate, endDate) => {
+  const query = { campgroundAmenityId };
+
+  if (startDate || endDate) {
+    query.$or = [
+      {
+        startDate: { $lte: endDate || new Date("9999-12-31") },
+        endDate: { $gte: startDate || new Date("0000-01-01") },
+      },
+    ];
+  }
+
+  const result = await AmenityBooking.aggregate([
+    { $match: query },
+    {
+      $group: {
+        _id: "$campgroundAmenityId",
+        totalAmount: { $sum: "$amount" },
+      },
+    },
+  ]);
+
+  return result[0]?.totalAmount || 0;
+};
+
+/**
+ * Get available quantity of an amenity in a date range
+ */
+const getAvailableAmenityQuantity = async (amenityId, startDate, endDate) => {
+  const amenity = await CampgroundAmenity.findById(amenityId);
+  if (!amenity) throw new Error("Amenity not found");
+
+  const bookedAmount = await getAmenityBookedAmount(amenityId, startDate, endDate);
+  const available = Math.max(0, amenity.quantity - bookedAmount);
+
+  return {
+    amenityId,
+    name: amenity.name,
+    totalQuantity: amenity.quantity,
+    totalBooked: bookedAmount,
+    available,
+  };
+};
 
 // @desc    Get all amenity bookings
 // @route   GET /api/v1/amenitybookings
 // @access  Public
-
 exports.getAmenityBookings = async (req, res, next) => {
   try {
     const amenityBookings = await AmenityBooking.find(); // ดึงข้อมูลทั้งหมด
@@ -60,9 +106,6 @@ exports.addAmenityBooking = async (req, res, next) => {
 
     // 1. Check if camp exists
     const booking = await Booking.findById(bookingId);
-    //console.log("dswdcedcwerfwerfcwercampId");
-    //console.log(campId);
-
     if (!booking) {
       return res
         .status(404)
@@ -72,7 +115,7 @@ exports.addAmenityBooking = async (req, res, next) => {
     // 2. Check if the campgroundAmenityId belongs to the camp
     const amenity = await CampgroundAmenity.findOne({
       _id: campgroundAmenityId,
-      campgroundId: booking.camp.id, // 👈 ชื่อ field ที่ใช้อ้างอิงแคมป์ใน CampgroundAmenity
+      campgroundId: booking.camp.id,
     });
 
     if (!amenity) {
@@ -85,11 +128,11 @@ exports.addAmenityBooking = async (req, res, next) => {
     // 3. Create Amenity Booking
     const amenityBooking = await AmenityBooking.create({
       userId: req.user.id,
-      campgroundBookingId: bookingId, // จาก URL /:bookingId/amenitybooking
+      campgroundBookingId: bookingId,
       campgroundAmenityId: campgroundAmenityId,
       amount: req.body.amount,
       startDate: req.body.startDate,
-      endDate: req.body.endDate
+      endDate: req.body.endDate,
     });
 
     res.status(201).json({
@@ -109,13 +152,11 @@ exports.updateAmenityBooking = async (req, res, next) => {
   try {
     const amenitybooking = await AmenityBooking.findByIdAndUpdate(
       req.params.id,
-      {
-        ...req.body, // Spread the entire body into the update
-      },
+      { ...req.body },
       {
         new: true,
         runValidators: true,
-      },
+      }
     );
 
     if (!amenitybooking) {
