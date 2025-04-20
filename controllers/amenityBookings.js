@@ -96,6 +96,38 @@ exports.getAmenityBooking = async (req, res, next) => {
   }
 };
 
+// @desc    Get amenity booking by bookingId
+// @route   GET /api/v1/amenitybookings/bookings/:bookingId
+// @access  Public
+
+exports.getAmenityBookingByBookingId = async (req, res, next) => {
+  
+  const { bookingId } = req.params;
+
+  try {
+    const amenityBookings = await AmenityBooking.find({
+      campgroundBookingId: bookingId,
+    })
+      .populate("campgroundBookingId")
+      .populate("userId")
+      .populate("campgroundAmenityId");
+
+    if (!amenityBookings || amenityBookings.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Amenity bookings not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: amenityBookings,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
 // @desc    Add new amenity booking (with overbooking prevention)
 // @route   POST /api/v1/bookings/:bookingId/amenities/:amenityId/amenitybookings
 // @access  Private
