@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const AmenityBookingSchema = new mongoose.Schema({
     campgroundBookingId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'CampgroundBooking',
+      ref: 'Booking',
       required: true
     },
     userId: {  // 🔁 Redundant but very useful
