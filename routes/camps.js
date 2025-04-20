@@ -9,7 +9,7 @@ const router = express.Router();
 const {protect,authorize} = require('../middleware/auth');
 
 //re-route into other resource router
-router.use('/:campid/bookings/',bookingRouter);
+router.use('/:campId/bookings/',bookingRouter);
 
 
 
