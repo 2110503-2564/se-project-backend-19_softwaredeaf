@@ -112,7 +112,7 @@ exports.getAmenityBookingByBookingId = async (req, res, next) => {
       .populate("userId")
       .populate("campgroundAmenityId");
 
-    if (!amenityBookings || amenityBookings.length === 0) {
+    if (!amenityBookings) {
       return res
         .status(404)
         .json({ success: false, message: "Amenity bookings not found" });
