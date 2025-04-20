@@ -264,7 +264,9 @@ exports.updateAmenityBooking = async (req, res, next) => {
       });
     }
 
-    const amenitybooking = await AmenityBooking.findById(req.params.id);
+    const amenitybooking = await AmenityBooking.findById(req.params.id)
+    .populate("campgroundBookingId")
+    .populate("campgroundAmenityId");
 
     if (!amenitybooking) {
       return res.status(404).json({
@@ -275,7 +277,7 @@ exports.updateAmenityBooking = async (req, res, next) => {
 
     //Make sure user is the booking owner
     const campground = await Camp.findById(amenitybooking.campgroundAmenityId.campgroundId);
-    
+    console.log(amenitybooking.campgroundAmenityId);
     if(!campground) {
         return res.status(404).json({
             success: false,
@@ -322,7 +324,9 @@ exports.updateAmenityBooking = async (req, res, next) => {
 //@access   Private
 exports.deleteAmenityBooking = async (req, res, next) => {
   try {
-    const amenitybooking = await AmenityBooking.findById(req.params.id);
+    const amenitybooking = await AmenityBooking.findById(req.params.id)
+    .populate("campgroundBookingId")
+    .populate("campgroundAmenityId");
 
     if (!amenitybooking) {
       return res.status(404).json({
@@ -376,7 +380,8 @@ exports.deleteAmenityBookingByBookingId = async (req, res, next) => {
   try {
     const amenitybooking = await AmenityBooking.find({
       campgroundBookingId: req.params.bookingId,
-    });
+    }).populate("campgroundBookingId")
+    .populate("campgroundAmenityId");
 
     if (!amenitybooking) {
       return res.status(404).json({
