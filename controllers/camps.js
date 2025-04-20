@@ -97,13 +97,25 @@ exports.getCamp = async(req,res,next)=>{
 //@desc     Create new camps
 //@route    POST /api/v1/camps
 //@access   Private
-exports.createCamp = async(req,res,next)=>{
-    const camp = await Camp.create(req.body);
-    res.status(201).json({
-        success:true,
-        data:camp
-    });
-};
+exports.createCamp = async (req, res, next) => {
+    try {
+      // เพิ่ม owner ลงไปใน req.body
+      req.body.owner = req.user.id;
+  
+      const camp = await Camp.create(req.body);
+  
+      res.status(201).json({
+        success: true,
+        data: camp,
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(400).json({
+        success: false,
+        message: 'Failed to create camp',
+      });
+    }
+  };
 
 //@desc     Update new camps
 //@route    PUT /api/v1/camps/:id
