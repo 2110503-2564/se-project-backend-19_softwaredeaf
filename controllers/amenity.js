@@ -15,14 +15,7 @@ exports.getAmenity = async (req, res, next) => {
 
       console.log(amenity);
 
-      if(amenity.length === 0){
-        res.status(404).json({
-          success: false,
-          message: "Amenity not found",
-        });
-      }else{
-        res.status(200).json({ success: true, data: amenity });
-      }
+      res.status(200).json({ success: true, data: amenity });
 
   } catch (error) {
     console.log(error);
