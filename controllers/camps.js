@@ -157,30 +157,38 @@ exports.updateCamp = async(req,res,next)=>{
 //@desc     Delete new camps
 //@route    DELETE /api/v1/camps/:id
 //@access   Private
-exports.deleteCamp = async(req,res,next)=>{
+exports.deleteCamp = async (req, res, next) => {
     try {
         let camp = await Camp.findById(req.params.id);
-        
-            if(!camp) {
-                return res.status(404).json({
-                    success: false,
-                    message: `No campground with the id of ${req.params.id}`
-                });
-            }
-        
-            //Make sure user is the booking owner
-            if(camp.owner.toString() !== req.user.id && req.user.role !== 'admin') {
-                return res.status(401).json({
-                    success: false,
-                    message: `User ${req.user.id} is not authorized to update this booking`
-                });
-            }
 
-        await Booking.deleteMany({camp: req.params.id});
-        await Camp.deleteOne({_id: req.params.id});
+        if (!camp) {
+            return res.status(404).json({
+                success: false,
+                message: `No campground with the id of ${req.params.id}`
+            });
+        }
 
-        res.status(200).json({success:true, data: {}});
-    } catch(err) {
-        return res.status(400).json({success:false});
+        // Make sure user is the booking owner
+        if ((!camp.owner|| camp.owner.toString() !== req.user.id) && req.user.role !== 'admin') {
+            return res.status(401).json({
+                success: false,
+                message: `User ${req.user.id} is not authorized to delete this campground`
+            });
+        }
+
+        await Booking.deleteMany({ camp: req.params.id });
+        await Camp.deleteOne({ _id: req.params.id });
+
+        res.status(200).json({ success: true, data: {} });
+    } catch (err) {
+        // Log the error to see the full details
+        console.error('Error in deleteCamp:', err);
+
+        // Provide a more detailed error message
+        return res.status(400).json({
+            success: false,
+            message: err.message || 'Something went wrong'
+        });
     }
 };
+
