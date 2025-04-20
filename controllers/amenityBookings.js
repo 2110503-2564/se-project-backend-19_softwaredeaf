@@ -264,6 +264,38 @@ exports.updateAmenityBooking = async (req, res, next) => {
       });
     }
 
+    const amenitybooking = await AmenityBooking.findById(req.params.id);
+
+    if (!amenitybooking) {
+      return res.status(404).json({
+        success: false,
+        message: `No booking with the id of ${req.params.id}`,
+      });
+    }
+
+    //Make sure user is the booking owner
+    const campground = await Camp.findById(amenitybooking.campgroundAmenityId.campgroundId);
+    
+    if(!campground) {
+        return res.status(404).json({
+            success: false,
+            message: `No campground with the id of ${amenitybooking.campgroundAmenityId.campgroundId}`
+        });
+    }
+            
+    if(req.user.role === 'user' && amenitybooking.userId.toString() !== req.user.id)
+    {
+        return res.status(401).json({
+            success: false,
+            message: `User ${req.user.id} is not authorized to delete this bootcamp`
+         });
+    }else if(req.user.role === 'owner' && campground.owner.toString() !== req.user.id && amenitybooking.userId.toString() !== req.user.id){
+        return res.status(401).json({
+            success: false,
+            message: `User ${req.user.id} is not authorized to delete this bootcamp`
+        });
+    }
+
     // 🛠️ 4. Proceed with update
     const updated = await AmenityBooking.findByIdAndUpdate(
       req.params.id,
@@ -299,6 +331,29 @@ exports.deleteAmenityBooking = async (req, res, next) => {
       });
     }
 
+    //Make sure user is the booking owner
+    const campground = await Camp.findById(amenitybooking.campgroundAmenityId.campgroundId);
+    
+    if(!campground) {
+        return res.status(404).json({
+            success: false,
+            message: `No campground with the id of ${amenitybooking.campgroundAmenityId.campgroundId}`
+        });
+    }
+            
+    if(req.user.role === 'user' && amenitybooking.userId.toString() !== req.user.id)
+    {
+        return res.status(401).json({
+            success: false,
+            message: `User ${req.user.id} is not authorized to delete this bootcamp`
+         });
+    }else if(req.user.role === 'owner' && campground.owner.toString() !== req.user.id && amenitybooking.userId.toString() !== req.user.id){
+        return res.status(401).json({
+            success: false,
+            message: `User ${req.user.id} is not authorized to delete this bootcamp`
+        });
+    }
+
     await amenitybooking.deleteOne();
 
     res.status(200).json({
@@ -319,15 +374,38 @@ exports.deleteAmenityBooking = async (req, res, next) => {
 // @access  Private
 exports.deleteAmenityBookingByBookingId = async (req, res, next) => {
   try {
-    const amenityBookings = await AmenityBooking.find({
+    const amenitybooking = await AmenityBooking.find({
       campgroundBookingId: req.params.bookingId,
     });
 
-    if (!amenityBookings) {
+    if (!amenitybooking) {
       return res.status(404).json({
         success: false,
         message: `No amenity bookings with the bookingId of ${req.params.bookingId}`,
       });
+    }
+
+    //Make sure user is the booking owner
+    const campground = await Camp.findById(amenitybooking.campgroundAmenityId.campgroundId);
+    
+    if(!campground) {
+        return res.status(404).json({
+            success: false,
+            message: `No campground with the id of ${amenitybooking.campgroundAmenityId.campgroundId}`
+        });
+    }
+            
+    if(req.user.role === 'user' && amenitybooking.userId.toString() !== req.user.id)
+    {
+        return res.status(401).json({
+            success: false,
+            message: `User ${req.user.id} is not authorized to delete this bootcamp`
+         });
+    }else if(req.user.role === 'owner' && campground.owner.toString() !== req.user.id && amenitybooking.userId.toString() !== req.user.id){
+        return res.status(401).json({
+            success: false,
+            message: `User ${req.user.id} is not authorized to delete this bootcamp`
+        });
     }
 
     await AmenityBooking.deleteMany({
@@ -336,7 +414,7 @@ exports.deleteAmenityBookingByBookingId = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: `Deleted ${amenityBookings.length} amenity booking(s).`,
+      message: `Deleted ${amenitybooking.length} amenity booking(s).`,
     });
   } catch (err) {
     console.error(err.stack);
