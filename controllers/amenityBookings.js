@@ -313,3 +313,36 @@ exports.deleteAmenityBooking = async (req, res, next) => {
     });
   }
 };
+
+// @desc    Delete amenity bookings by bookingId
+// @route   DELETE /api/v1/amenitybookings/bookings/:bookingId
+// @access  Private
+exports.deleteAmenityBookingByBookingId = async (req, res, next) => {
+  try {
+    const amenityBookings = await AmenityBooking.find({
+      campgroundBookingId: req.params.bookingId,
+    });
+
+    if (!amenityBookings) {
+      return res.status(404).json({
+        success: false,
+        message: `No amenity bookings with the bookingId of ${req.params.bookingId}`,
+      });
+    }
+
+    await AmenityBooking.deleteMany({
+      campgroundBookingId: req.params.bookingId,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: `Deleted ${amenityBookings.length} amenity booking(s).`,
+    });
+  } catch (err) {
+    console.error(err.stack);
+    res.status(500).json({
+      success: false,
+      message: "Cannot delete AmenityBooking(s)",
+    });
+  }
+};
