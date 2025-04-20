@@ -131,12 +131,12 @@ exports.updateBooking = async (req,res,next) => {
         }
 
         //Make sure user is the booking owner
-        const campground = await Camp.findById(booking.camp.id);
+        const campground = await Camp.findById(booking.camp);
 
         if(!campground) {
             return res.status(404).json({
                 success: false,
-                message: `No campground with the id of ${booking.camp.id}`
+                message: `No campground with the id of ${booking.camp}`
             });
         }
         
@@ -186,12 +186,12 @@ exports.deleteBooking = async (req,res,next) => {
         }
 
         //Make sure user is the booking owner
-        const campground = await Camp.findById(booking.camp.id);
+        const campground = await Camp.findById(booking.camp);
 
         if(!campground) {
             return res.status(404).json({
                 success: false,
-                message: `No campground with the id of ${booking.camp.id}`
+                message: `No campground with the id of ${booking.camp}`
             });
         }
         
