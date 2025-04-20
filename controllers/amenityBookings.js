@@ -125,7 +125,7 @@ exports.addAmenityBooking = async (req, res, next) => {
     // 2. Check if amenity belongs to this campground
     const amenity = await CampgroundAmenity.findOne({
       _id: campgroundAmenityId,
-      campgroundId: booking.camp.id,
+      campgroundId: booking.camp.toString(),
     });
     if (!amenity) {
       return res.status(400).json({
