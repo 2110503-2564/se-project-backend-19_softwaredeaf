@@ -67,11 +67,20 @@ exports.updateAmenity = async (req, res, next) => {
       });
     }
 
-    const amenity = await Amenity.findByIdAndUpdate(req.params.id, req.body, {
+    const amenity = await Amenity.findById(req.params.id);
+
+    if(amenity.amountbooked > req.body.amount){
+      res.status(400).json({
+        success: false,
+        message: `Quantity can not be less than booked`,
+      });
+    }
+
+    const updateamenity = await Amenity.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
-    if (!amenity) {
+    if (!updateamenity) {
       return res.status(400).json({
         success: false,
         message: `Amenity not found`,
@@ -79,7 +88,7 @@ exports.updateAmenity = async (req, res, next) => {
     }
     res.status(200).json({
       success: true,
-      data: amenity,
+      data: updateamenity,
     });
   } catch (err) {
     return res.status(400).json({ success: false });
