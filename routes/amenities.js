@@ -17,7 +17,8 @@ const { protect, authorize } = require("../middleware/auth");
 router
   .route("/")
   .get(getAmenity)
-  .post(protect, authorize("owner", "admin"), upload.single('image'), addAmenities);
+  .post(protect, authorize("owner", "admin"), addAmenities);
+  // upload.single('image')
 router
   .route("/:id")
   .delete(protect, authorize("owner", "admin"), deleteAmenity)
