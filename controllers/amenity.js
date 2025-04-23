@@ -49,13 +49,14 @@ exports.addAmenities = async (req, res, next) => {
       });
     }
 
-    if(req.body.files){
-      const filename = generateFileName();
-      const file = req.file;
-      req.body.image = await uploadFile(file,filename,file.mimetype);
-    }
+    // if(req.file){
+    //   const filename = generateFileName();
+    //   const file = req.file;
+    //   req.body.image = filename;
+    //   await uploadFile(file,filename,file.mimetype);
+    // }
 
-    // const amenity = await Amenity.create(req.body);
+    const amenity = await Amenity.create(req.body);
     res.status(201).json({
       success: true,
       data: amenity,
