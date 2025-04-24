@@ -16,6 +16,8 @@ const auth = require("./routes/auth");
 const bookings = require("./routes/bookings");
 const amenities = require("./routes/amenities");
 const amenityBookings = require('./routes/amenityBookings');
+const campReviews = require('./routes/campReviews');
+const userReviews = require('./routes/userReviews');
 
 
 const app = express();
@@ -34,6 +36,8 @@ app.use("/api/v1/auth", auth);
 app.use("/api/v1/bookings", bookings);
 app.use("/api/v1/camps/:campId/amenities", amenities);
 app.use('/api/v1/amenitybookings', amenityBookings);
+app.use('/api/v1/campreviews', campReviews);
+app.use('/api/v1/userreviews', userReviews);
 
 
 const PORT = process.env.PORT || 5003;
