@@ -2,8 +2,8 @@ import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } fro
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
 import dotenv from 'dotenv'
-const crypto = require('crypto');
-const sharp = require('sharp');
+import crypto from 'crypto'
+import sharp from'sharp'
 
 dotenv.config({path:'../config/config.env'});
 
