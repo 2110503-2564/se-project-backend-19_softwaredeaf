@@ -8,7 +8,7 @@ exports.getMyReview= async(req,res,next)=>{
     select: "name"
   });
 
-  if(!myReview){
+  if(myReview.length==0 || !myReview){
     return res.status(400).json({
       message:'Fail to find review'
     })
@@ -19,11 +19,15 @@ exports.getMyReview= async(req,res,next)=>{
 
 exports.getCampReview= async(req,res,next)=>{
   const campReview = await Review.find({ camp: req.params.id })
-  if(campReview.length==0){
+  if(campReview.length==0 || !campReview){
     return res.status(400).json({
       message:'Fail to find review'
     })
   }
 
   return res.status(200).json({ success: true, data: campReview });
+}
+
+exports.deleteReview = async(req,res,next) =>{
+
 }

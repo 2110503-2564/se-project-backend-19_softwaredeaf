@@ -4,6 +4,8 @@ const { getMyReview } =require('../controllers/review')
 const router = express.Router();
 
 
+const {protect,authorize} = require('../middleware/auth');
+
 router.route('/:id').get(getMyReview);
 
 module.exports = router;
