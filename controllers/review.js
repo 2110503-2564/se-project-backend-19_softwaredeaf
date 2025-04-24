@@ -67,6 +67,12 @@ exports.createReview = async (req, res, next) => {
 
 exports.deleteReview = async (req, res, next) => {
   try {
+    if (req.user.id !== req.params.id && req.user.role != "admin") {
+      return res.status(403).json({
+        message: "You are not authorized to delete this reviews.",
+      });
+    }
+
     const review = await Review.findById(req.params.id);
     if (!review) {
       return res.status(404).json({
@@ -74,7 +80,7 @@ exports.deleteReview = async (req, res, next) => {
         message: `Cannot find review`,
       });
     }
-    await Review.deleteOne({ _id: req.paramspa.id });
+    await Review.deleteOne({ _id: req.params.id });
     return res.status(200).json({
       success: true,
       data: {},
