@@ -1,4 +1,8 @@
 const Review = require("../models/Review");
+
+// @desc Get all reviews of the user with the given ID
+// @route   GET /api/v1/userreviews/:id
+// @access  Private
 exports.getMyReview = async (req, res, next) => {
   try {
     if (req.user.id !== req.params.id && req.user.role != "admin") {
@@ -32,6 +36,10 @@ exports.getMyReview = async (req, res, next) => {
   }
 };
 
+
+// @desc Get all reviews of the camp with the given ID
+// @route   GET /api/v1/campreviews/:id
+// @access  Public
 exports.getCampReview = async (req, res, next) => {
   try {
     const campReview = await Review.find({ campgroundId: req.params.id });
@@ -50,6 +58,10 @@ exports.getCampReview = async (req, res, next) => {
   }
 };
 
+
+// @desc Create a new review
+// @route   POST /api/v1/userreviews/
+// @access Private
 exports.createReview = async (req, res, next) => {
   try {
     const review = await Review.create(req.body);
@@ -65,6 +77,9 @@ exports.createReview = async (req, res, next) => {
   }
 };
 
+// @desc    Delete a review by ID
+// @route   DELETE /api/v1/userreviews/:id
+// @access  Private
 exports.deleteReview = async (req, res, next) => {
   try {
     if (req.user.id !== req.params.id && req.user.role != "admin") {
@@ -112,7 +127,7 @@ exports.getUserReviews = async (req, res, next) => {
     });
 
     return res.status(200).json({ success: true, data: campReview });
-  } 
+  }
   catch (err) {
     console.error(err);
     res.status(500).json({
