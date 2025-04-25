@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const campgroundAmenitySchema = new mongoose.Schema({
   campgroundId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Camp',
+    ref: 'Campground',
     required: true
   },
 
@@ -11,7 +11,6 @@ const campgroundAmenitySchema = new mongoose.Schema({
   description: { type: String },
   image: { type: String },
   quantity: { type: Number, default: 1 },
-  amountbooked: { type: Number, default: 0 },
   price: { type: Number, default: 0 },
 
   status: {
