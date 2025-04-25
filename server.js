@@ -40,7 +40,7 @@ app.use("/api/v1/camps/:campId/amenities", amenities);
 app.use('/api/v1/amenitybookings', amenityBookings);
 app.use('/api/v1/campreviews', campReviews);
 app.use('/api/v1/userreviews', userReviews);
-// //by kwan
+//by kwan
 app.use('/api/v1/reviews',reviews);
 
 

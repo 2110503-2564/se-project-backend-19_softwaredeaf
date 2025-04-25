@@ -94,9 +94,9 @@ exports.deleteReview = async (req, res, next) => {
 };
 
 //add by kwan
-//@desc     Get all camps
-//@route    GET /api/v1/camps
-//@access   Public
+// @desc Get all reviews with 'username' consist of searchTerm
+// @route   GET /api/v1/reviews  (with body {username:searchTerm})
+// @access  admin
 exports.getUserReviews = async (req, res, next) => {
   const searchTerm = req.body.username;
 
