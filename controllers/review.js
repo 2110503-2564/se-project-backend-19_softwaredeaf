@@ -100,12 +100,6 @@ exports.deleteReview = async (req, res, next) => {
 exports.getUserReviews = async (req, res, next) => {
   const searchTerm = req.body.username;
 
-  if (!searchTerm) {
-    return res.status(400).json({
-      message: "Search term missing",
-    });
-  }
-
   try {
     const campReview = await Review.find({
       username: { $regex: searchTerm, $options: "i" }
