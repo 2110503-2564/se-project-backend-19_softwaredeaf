@@ -18,7 +18,8 @@ const amenities = require("./routes/amenities");
 const amenityBookings = require('./routes/amenityBookings');
 const campReviews = require('./routes/campReviews');
 const userReviews = require('./routes/userReviews');
-
+// //by kwan
+const reviews = require('./routes/reviews');
 
 const app = express();
 
@@ -39,6 +40,8 @@ app.use("/api/v1/camps/:campId/amenities", amenities);
 app.use('/api/v1/amenitybookings', amenityBookings);
 app.use('/api/v1/campreviews', campReviews);
 app.use('/api/v1/userreviews', userReviews);
+// //by kwan
+app.use('/api/v1/reviews',reviews);
 
 
 const PORT = process.env.PORT || 5003;
