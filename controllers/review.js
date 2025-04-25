@@ -7,17 +7,17 @@ exports.getMyReview = async (req, res, next) => {
       });
     }
 
-    const myReview = await Review.find({ user: req.params.id })
+    const myReview = await Review.find()
       .populate({
-        path: "user",
+        path: "userId",
         select: "name",
       })
       .populate({
-        path: "camp",
+        path: "campgroundId",
         select: "name",
       });
 
-    if (myReview.length == 0 || !myReview) {
+    if (myReview.length == 0 ) {
       return res.status(400).json({
         message: "No reviews found for this user",
       });
@@ -34,7 +34,7 @@ exports.getMyReview = async (req, res, next) => {
 
 exports.getCampReview = async (req, res, next) => {
   try {
-    const campReview = await Review.find({ camp: req.params.id });
+    const campReview = await Review.find({ campgroundId: req.params.id });
     if (campReview.length == 0 || !campReview) {
       return res.status(404).json({
         message: "No reviews found for this camp",

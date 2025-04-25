@@ -8,7 +8,7 @@ const campgroundReviewSchema = new mongoose.Schema({
   },
   username: {
     type: String,
-    required: true, // Filled from user document on creation
+    required: true,
   },
   campgroundId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -17,7 +17,7 @@ const campgroundReviewSchema = new mongoose.Schema({
   },
   campgroundName: {
     type: String,
-    required: true, // Stored for faster queries/display
+    required: true,
   },
   rating: {
     type: Number,
