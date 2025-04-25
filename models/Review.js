@@ -24,6 +24,11 @@ const ReviewSchema = new mongoose.Schema({
     required: true,
     min: [0.5, 'Too little stars.'],
     max: [5.0, 'Too much stars.'],
+  },
+  status: {
+    type: String,
+    enum: ['normal', 'reported'],
+    default: 'normal'
   }
 }, { timestamps: true });
 
