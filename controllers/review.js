@@ -98,7 +98,7 @@ exports.deleteReview = async (req, res, next) => {
 // @route   GET /api/v1/reviews  (with body {username:searchTerm})
 // @access  admin
 exports.getUserReports = async (req, res, next) => {
-  const searchTerm = req.body.username;
+  const searchTerm = req.query.search;
 
   try {
     const campReview = await Review.find({
