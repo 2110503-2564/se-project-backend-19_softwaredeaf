@@ -1,6 +1,7 @@
 const Amenity = require("../models/CampgroundAmenity");
 const mongoose = require("mongoose"); // Import mongoose for error checking
 const Camp = require("../models/Camp");
+const { getObjectSignedUrl, uploadFile, generateFileName, deleteFile } = require("./s3");
 
 // @desc    Get all campground amenity
 // @route   GET /api/v1/camps/:campId/amenities
@@ -14,6 +15,12 @@ exports.getAmenity = async (req, res, next) => {
       .populate('campgroundId');
 
       console.log(amenity);
+
+      for(let eachAmenity of amenity){
+        if(eachAmenity.image){
+          eachAmenity.image = await getObjectSignedUrl(eachAmenity.image);
+        }
+      }
 
       res.status(200).json({ success: true, data: amenity });
 
@@ -41,12 +48,21 @@ exports.addAmenities = async (req, res, next) => {
         message: `User ${req.user.id} is not authorized to add this amenity`,
       });
     }
+
+    if(req.file){
+      const filename = generateFileName();
+      const file = req.file;
+      req.body.image = filename;
+      await uploadFile(file,filename,file.mimetype);
+    }
+
     const amenity = await Amenity.create(req.body);
     res.status(201).json({
       success: true,
       data: amenity,
     });
   } catch (err) {
+    console.log(err);
     return res.status(400).json({ success: false });
   }
 };
@@ -76,10 +92,19 @@ exports.updateAmenity = async (req, res, next) => {
       });
     }
 
+    if(req.file){
+      await deleteFile(amenity.image)
+      const filename = generateFileName();
+      const file = req.file;
+      req.body.image = filename;
+      await uploadFile(file,filename,file.mimetype);
+    }
+
     const updateamenity = await Amenity.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
+
     if (!updateamenity) {
       return res.status(400).json({
         success: false,
@@ -117,7 +142,19 @@ exports.deleteAmenity = async (req, res, next) => {
         message: `Amenity not found`,
       });
     }
+
+    let imagename ;
+
+    if(amenity.image){
+      imagename = amenity.image;
+    }
+    
     await Amenity.deleteOne({ _id: req.params.id });
+
+    if(imagename){
+      await deleteFile(imagename);
+    }
+
     res.status(200).json({ success: true, data: {} });
   } catch (err) {
     return res.status(400).json({ success: false });
