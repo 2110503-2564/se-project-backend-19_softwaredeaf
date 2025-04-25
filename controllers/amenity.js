@@ -16,11 +16,11 @@ exports.getAmenity = async (req, res, next) => {
 
       console.log(amenity);
 
-      // for(let eachAmenity of amenity){
-      //   if(eachAmenity.imagename){
-      //     eachAmenity.image = await getObjectSignedUrl(eachAmenity.imagename);
-      //   }
-      // }
+      for(let eachAmenity of amenity){
+        if(eachAmenity.image){
+          eachAmenity.image = await getObjectSignedUrl(eachAmenity.image);
+        }
+      }
 
       res.status(200).json({ success: true, data: amenity });
 
@@ -49,12 +49,12 @@ exports.addAmenities = async (req, res, next) => {
       });
     }
 
-    // if(req.file){
-    //   const filename = generateFileName();
-    //   const file = req.file;
-    //   req.body.image = filename;
-    //   await uploadFile(file,filename,file.mimetype);
-    // }
+    if(req.file){
+      const filename = generateFileName();
+      const file = req.file;
+      req.body.image = filename;
+      await uploadFile(file,filename,file.mimetype);
+    }
 
     const amenity = await Amenity.create(req.body);
     res.status(201).json({
@@ -62,6 +62,7 @@ exports.addAmenities = async (req, res, next) => {
       data: amenity,
     });
   } catch (err) {
+    console.log(err);
     return res.status(400).json({ success: false });
   }
 };
@@ -91,10 +92,19 @@ exports.updateAmenity = async (req, res, next) => {
       });
     }
 
+    if(req.file){
+      await deleteFile(amenity.image)
+      const filename = generateFileName();
+      const file = req.file;
+      req.body.image = filename;
+      await uploadFile(file,filename,file.mimetype);
+    }
+
     const updateamenity = await Amenity.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
+
     if (!updateamenity) {
       return res.status(400).json({
         success: false,
@@ -133,17 +143,17 @@ exports.deleteAmenity = async (req, res, next) => {
       });
     }
 
-    // let imagename ;
+    let imagename ;
 
-    // if(amenity.image){
-    //   imagename = amenity.image;
-    // }
+    if(amenity.image){
+      imagename = amenity.image;
+    }
     
     await Amenity.deleteOne({ _id: req.params.id });
 
-    // if(imagename){
-    //   await deleteFile(imagename);
-    // }
+    if(imagename){
+      await deleteFile(imagename);
+    }
 
     res.status(200).json({ success: true, data: {} });
   } catch (err) {

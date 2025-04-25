@@ -25,7 +25,7 @@ const s3Client = new S3Client({
 
 export async function uploadFile(file, fileName, mimetype) {
   const fileBuffer = await sharp(file.buffer)
-    .resize({ height: 1920, width: 1080, fit: "contain" })
+    .resize({ height: 1080, width: 1920, fit: "contain" })
     .toBuffer()
     
   const uploadParams = {
@@ -54,7 +54,7 @@ export async function getObjectSignedUrl(key) {
   }
 
   const command = new GetObjectCommand(params);
-  const seconds = 3600
+  const seconds = 3600 
   const url = await getSignedUrl(s3Client, command, { expiresIn: seconds });
 
   return url

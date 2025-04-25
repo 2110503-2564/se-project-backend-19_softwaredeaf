@@ -17,11 +17,10 @@ const { protect, authorize } = require("../middleware/auth");
 router
   .route("/")
   .get(getAmenity)
-  .post(protect, authorize("owner", "admin"), addAmenities);
-  // upload.single('image')
+  .post(protect, authorize("owner", "admin"),upload.single('image'), addAmenities);
 router
   .route("/:id")
   .delete(protect, authorize("owner", "admin"), deleteAmenity)
-  .put(protect, authorize("owner", "admin"), updateAmenity);
+  .put(protect, authorize("owner", "admin"),upload.single('image'), updateAmenity);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const Booking = require('../models/Booking.js');
 const Camp = require('../models/Camp.js');
+const { generateFileName, uploadFile, getObjectSignedUrl, deleteFile } = require('./s3.js');
 
 //@desc     Get all camps
 //@route    GET /api/v1/camps
@@ -60,6 +61,12 @@ exports.getCamps = async (req, res, next) => {
             };
         }
 
+        for(let eachCampground of camps){
+            if(eachCampground.picture && !eachCampground.picture.startsWith('http')){
+                eachCampground.picture = await getObjectSignedUrl(eachCampground.picture);
+            }
+        }
+
         res.status(200).json({
             success: true,
             count: camps.length,
@@ -85,6 +92,10 @@ exports.getCamp = async(req,res,next)=>{
             return res.status(400).json({success:false});
         }
 
+        if(camp.picture && !camp.picture.startsWith('http')){
+            camp.picture = await getObjectSignedUrl(camp.picture);
+        }
+
         res.status(200).json({
             success:true,
             data:camp
@@ -101,6 +112,12 @@ exports.createCamp = async (req, res, next) => {
     try {
       // เพิ่ม owner ลงไปใน req.body
       req.body.owner = req.user.id;
+
+      if(req.file){
+        const imageName = generateFileName();
+        await uploadFile(req.file,imageName,req.file.mimetype);
+        req.body.picture = imageName;
+      }
   
       const camp = await Camp.create(req.body);
   
@@ -139,6 +156,13 @@ exports.updateCamp = async(req,res,next)=>{
                     message: `User ${req.user.id} is not authorized to update this booking`
                 });
             }
+
+            if(req.file){
+                const imageName = generateFileName();
+                await deleteFile(camp.picture);
+                await uploadFile(req.file,imageName,req.file.mimetype);
+                req.body.picture = imageName;
+            }
         
         camp = await Camp.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
@@ -176,8 +200,15 @@ exports.deleteCamp = async (req, res, next) => {
             });
         }
 
+        let deleteImage = camp.picture;
+
+        
         await Booking.deleteMany({ camp: req.params.id });
         await Camp.deleteOne({ _id: req.params.id });
+        
+        if(deleteImage && !deleteImage.startsWith('http')){
+            await deleteFile(deleteImage);
+        }
 
         res.status(200).json({ success: true, data: {} });
     } catch (err) {
