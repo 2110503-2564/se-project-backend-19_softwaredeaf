@@ -92,3 +92,22 @@ exports.deleteReview = async (req, res, next) => {
     });
   }
 };
+
+//add by kwan
+exports.getUserReview = async (req, res, next) => {
+  try {
+    const campReview = await Review.find({ username: req.params.id });
+    if (campReview.length == 0 || !campReview) {
+      return res.status(404).json({
+        message: "No reviews found for this camp",
+      });
+    }
+    return res.status(200).json({ success: true, data: campReview });
+  } 
+  catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
