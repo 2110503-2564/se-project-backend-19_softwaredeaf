@@ -94,14 +94,23 @@ exports.deleteReview = async (req, res, next) => {
 };
 
 //add by kwan
-exports.getUserReview = async (req, res, next) => {
+//@desc     Get all camps
+//@route    GET /api/v1/camps
+//@access   Public
+exports.getUserReviews = async (req, res, next) => {
+  const searchTerm = req.body.username;
+
+  if (!searchTerm) {
+    return res.status(400).json({
+      message: "Search term missing",
+    });
+  }
+
   try {
-    const campReview = await Review.find({ username: req.params.id });
-    if (campReview.length == 0 || !campReview) {
-      return res.status(404).json({
-        message: "No reviews found for this camp",
-      });
-    }
+    const campReview = await Review.find({
+      username: { $regex: searchTerm, $options: "i" }
+    });
+
     return res.status(200).json({ success: true, data: campReview });
   } 
   catch (err) {
