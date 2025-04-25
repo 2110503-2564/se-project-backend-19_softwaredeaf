@@ -19,7 +19,7 @@ const amenityBookings = require('./routes/amenityBookings');
 const campReviews = require('./routes/campReviews');
 const userReviews = require('./routes/userReviews');
 // //by kwan
-const reviews = require('./routes/reviews');
+const reports = require('./routes/reports');
 
 const app = express();
 
@@ -41,7 +41,7 @@ app.use('/api/v1/amenitybookings', amenityBookings);
 app.use('/api/v1/campreviews', campReviews);
 app.use('/api/v1/userreviews', userReviews);
 //by kwan
-app.use('/api/v1/reviews',reviews);
+app.use('/api/v1/reports',reports);
 
 
 const PORT = process.env.PORT || 5003;

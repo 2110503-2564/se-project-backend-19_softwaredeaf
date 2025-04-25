@@ -97,12 +97,12 @@ exports.deleteReview = async (req, res, next) => {
 // @desc Get all reviews with 'username' consist of searchTerm
 // @route   GET /api/v1/reviews  (with body {username:searchTerm})
 // @access  admin
-exports.getUserReviews = async (req, res, next) => {
+exports.getUserReports = async (req, res, next) => {
   const searchTerm = req.body.username;
 
   try {
     const campReview = await Review.find({
-      username: { $regex: searchTerm, $options: "i" }
+      username: { $regex: searchTerm, $options: "i" },status:{reported:true}
     });
 
     return res.status(200).json({ success: true, data: campReview });
