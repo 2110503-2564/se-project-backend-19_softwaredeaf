@@ -1,4 +1,10 @@
 const Review = require("../models/Review");
+const {
+  generateFileName,
+  uploadFile,
+  getObjectSignedUrl,
+  deleteFile,
+} = require("./s3.js");
 
 // @desc Get all reviews of the user with the given ID
 // @route   GET /api/v1/userreviews/:id
@@ -27,6 +33,20 @@ exports.getMyReview = async (req, res, next) => {
       });
     }
 
+    // for (let eachReview of myReview.data) {
+    //   if (
+    //     eachReview.pictures &&
+    //     !eachCampground.pictures[0].startsWith("http")
+    //   ) {
+    //     let pictures = [];
+    //     for (let eachImage of eachReview.pictures) {
+    //       const urlPicture = await getObjectSignedUrl(eachImage);
+    //       pictures.push(urlPicture);
+    //     }
+    //     eachReview.pictures = pictures;
+    //   }
+    // }
+
     return res.status(200).json({ success: true, data: myReview });
   } catch (err) {
     console.error(err);
@@ -49,6 +69,20 @@ exports.getCampReview = async (req, res, next) => {
       });
     }
 
+    // for (let eachReview of campReview.data) {
+    //   if (
+    //     eachReview.pictures &&
+    //     !eachCampground.pictures[0].startsWith("http")
+    //   ) {
+    //     let pictures = [];
+    //     for (let eachImage of eachReview.pictures) {
+    //       const urlPicture = await getObjectSignedUrl(eachImage);
+    //       pictures.push(urlPicture);
+    //     }
+    //     eachReview.pictures = pictures;
+    //   }
+    // }
+
     return res.status(200).json({ success: true, data: campReview });
   } catch (err) {
     console.error(err);
@@ -58,12 +92,21 @@ exports.getCampReview = async (req, res, next) => {
   }
 };
 
-
 // @desc Create a new review
 // @route   POST /api/v1/userreviews/
 // @access Private
 exports.createReview = async (req, res, next) => {
   try {
+    // if (req.file) {
+    //   let pictures = [];
+    //   for (let image of req.file) {
+    //     const filename = generateFileName();
+    //     uploadFile(image, filename, image.mimetype);
+    //     pictures.push(filename);
+    //   }
+    //   req.body.pictures = pictures;
+    // }
+
     const review = await Review.create(req.body);
     res.status(201).json({
       success: true,
@@ -95,7 +138,20 @@ exports.deleteReview = async (req, res, next) => {
         message: `Cannot find review`,
       });
     }
+    // let deletePictures;
+
+    // // if (review.pictures && !review.pictures[0].startsWith("http")) {
+    // //   deletePictures =  review.pictures;
+    // // }
+
     await Review.deleteOne({ _id: req.params.id });
+
+    // if(deletePictures && deletePictures.length != 0){
+    //   for(let eachPicture of deletePictures){
+    //     await deleteFile(eachPicture);
+    //   }
+    // }
+
     return res.status(200).json({
       success: true,
       data: {},
@@ -117,12 +173,26 @@ exports.getUserReports = async (req, res, next) => {
 
   try {
     const campReview = await Review.find({
-      username: { $regex: searchTerm, $options: "i" },status:{reported:true}
+      username: { $regex: searchTerm, $options: "i" },
+      status: { reported: true },
     });
 
+    // for (let eachReview of campReview) {
+    //   if (
+    //     eachReview.pictures &&
+    //     !eachReview.pictures[0].startsWith("http")
+    //   ) {
+    //     let pictures = [];
+    //     for (let eachImage of eachReview.pictures) {
+    //       const urlPicture = await getObjectSignedUrl(eachImage);
+    //       pictures.push(urlPicture);
+    //     }
+    //     eachReview.pictures = pictures;
+    //   }
+    // }
+
     return res.status(200).json({ success: true, data: campReview });
-  }
-  catch (err) {
+  } catch (err) {
     console.error(err);
     res.status(500).json({
       message: "Server error",
