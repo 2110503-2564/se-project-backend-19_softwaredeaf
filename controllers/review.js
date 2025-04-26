@@ -166,16 +166,23 @@ exports.deleteReview = async (req, res, next) => {
 
 //add by kwan
 // @desc Get all reviews with 'username' consist of searchTerm
-// @route   GET /api/v1/reviews  (with body {username:searchTerm})
+// @route   GET /api/v1/reviews  (with query ?username=searchTerm&camp=searchTerm)
 // @access  admin
 exports.getUserReports = async (req, res, next) => {
-  const searchTerm = req.query.search;
-
+  const searchUser = req.query.username;
+  const searchCamp = req.query.campname;
   try {
-    const campReview = await Review.find({
-      username: { $regex: searchTerm, $options: "i" },
-      status: { reported: true },
-    });
+    let query = { status: { reported: true } };
+
+    if (searchUser && searchUser.trim() !== "") {
+      query.username = { $regex: searchUser, $options: "i" };
+    }
+
+    if (searchCamp && searchCamp.trim() !== "") {
+      query.campgroundName = { $regex: searchCamp, $options: "i" };
+    }
+
+    const campReview = await Review.find(query);
 
     // for (let eachReview of campReview) {
     //   if (
@@ -193,9 +200,8 @@ exports.getUserReports = async (req, res, next) => {
 
     return res.status(200).json({ success: true, data: campReview });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      message: "Server error",
-    });
+    console.error("Error fetching reported reviews:", err);
+    return res.status(500).json({ message: "Server error" });
   }
 };
+
