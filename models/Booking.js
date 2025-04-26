@@ -21,6 +21,10 @@ const BookingSchema = new mongoose.Schema({
     },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
+    bookstatus:{
+        type: String,
+        default: "booked",
+    },
     createdAt: {
         type: Date,
         default: Date.now
