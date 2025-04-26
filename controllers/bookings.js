@@ -1,5 +1,6 @@
 const Booking = require("../models/Booking");
 const Camp = require("../models/Camp");
+const { getObjectSignedUrl } = require('./s3.js');
 
 //@desc     Get all bookings
 //@route    GET /api/v1/bookings
@@ -18,17 +19,23 @@ exports.getBookings = async (req, res, next) => {
       console.log(req.params.campId);
       query = Booking.find({ camp: req.params.campId }).populate({
         path: "camp",
-        select: "name province tel",
+        select: "name province tel picture",
       });
     } else {
       query = Booking.find().populate({
         path: "camp",
-        select: "name tel",
+        select: "name tel picture",
       });
     }
   }
   try {
     const bookings = await query;
+
+    for(let eachBooking of bookings){
+      if(eachBooking.camp.picture && !eachBooking.camp.picture.startsWith("http")){
+        eachBooking.camp.picture = await getObjectSignedUrl(eachBooking.camp.picture);
+      }
+    }
 
     res.status(200).json({
       success: true,
