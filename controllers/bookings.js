@@ -9,10 +9,25 @@ exports.getBookings = async (req, res, next) => {
   let query;
   //General users can see only their bookings!
   if (req.user.role !== "admin") {
-    query = Booking.find({ user: req.user.id }).populate({
-      path: "camp",
-      select: "name province tel",
-    });
+    if(req.user.role == "owner"){
+      if (req.params.campId) {
+        console.log(req.params.campId);
+        query = Booking.find({ camp: req.params.campId }).populate({
+          path: "camp",
+          select: "name province tel picture",
+        });
+      }else{
+        query = Booking.find({ user: req.user.id }).populate({
+          path: "camp",
+          select: "name province tel picture",
+        });
+      }
+    }else{
+      query = Booking.find({ user: req.user.id }).populate({
+        path: "camp",
+        select: "name province tel picture",
+      });
+    }
   } else {
     //If you are an admin, you can see all!
     if (req.params.campId) {
