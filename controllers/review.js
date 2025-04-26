@@ -119,22 +119,58 @@ exports.createReview = async (req, res, next) => {
   }
 };
 
+exports.updateReview = async (req, res, next) => {
+  try {
+    const review = await Review.findById(req.params.id);
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        message: `Cannot find review`,
+      });
+    }
+
+    if (req.user.id !== review.userId.toString() && req.user.role != "admin") {
+      return res.status(403).json({
+        message: "You are not authorized to edit this review.",
+      });
+    }
+
+    if (req.body.rating !== undefined) review.rating = req.body.rating;
+    if (req.body.comment !== undefined) review.comment = req.body.comment;
+    if (req.body.pictures !== undefined) review.pictures = req.body.pictures;
+
+    await review.save();
+    res.status(200).json({
+      success: true,
+      message: "Review updated successfully.",
+      review,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Error updating review. Please try again",
+    });
+  }
+};
+
 // @desc    Delete a review by ID
 // @route   DELETE /api/v1/userreviews/:id
 // @access  Private
 exports.deleteReview = async (req, res, next) => {
   try {
-    if (req.user.id !== req.params.id && req.user.role != "admin") {
-      return res.status(403).json({
-        message: "You are not authorized to delete this reviews.",
-      });
-    }
+
 
     const review = await Review.findById(req.params.id);
     if (!review) {
       return res.status(404).json({
         success: false,
         message: `Cannot find review`,
+      });
+    }
+
+    if (req.user.id !== review.userId.toString() && req.user.role != "admin") {
+      return res.status(403).json({
+        message: "You are not authorized to delete this review.",
       });
     }
     // let deletePictures;
