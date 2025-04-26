@@ -21,7 +21,7 @@ const BookingSchema = new mongoose.Schema({
     },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
-    bookstatus:{
+    visited:{
         type: Boolean,
         default: false,
     },
