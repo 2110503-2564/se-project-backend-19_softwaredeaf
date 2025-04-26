@@ -27,7 +27,7 @@ exports.getMyReview = async (req, res, next) => {
         select: "name",
       });
 
-    if (myReview.length == 0 ) {
+    if (myReview.length == 0) {
       return res.status(400).json({
         message: "No reviews found for this user",
       });
@@ -55,7 +55,6 @@ exports.getMyReview = async (req, res, next) => {
     });
   }
 };
-
 
 // @desc Get all reviews of the camp with the given ID
 // @route   GET /api/v1/campreviews/:id
@@ -204,4 +203,3 @@ exports.getUserReports = async (req, res, next) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
-
