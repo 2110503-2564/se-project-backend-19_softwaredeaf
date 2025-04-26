@@ -10,9 +10,8 @@ exports.getBookings = async (req, res, next) => {
   //General users can see only their bookings!
   if (req.user.role !== "admin") {
     if(req.user.role == "owner"){
-      if (req.params.campId) {
-        console.log(req.params.campId);
-        query = Booking.find({ camp: req.params.campId }).populate({
+      if (req.query.campId) {
+        query = Booking.find({ camp: req.query.campId }).populate({
           path: "camp",
           select: "name province tel picture",
         });
@@ -118,7 +117,7 @@ exports.addBooking = async (req, res, next) => {
     req.body.user = req.user.id;
 
     //Check for existed Booking
-    const existedBookings = await Booking.find({ user: req.user.id });
+    const existedBookings = await Booking.find({ user: req.user.id ,bookstatus: false });
 
     //If the user is not an admin, they can only create 3 bookings.
     if (existedBookings.length >= 3 && req.user.role !== "admin") {
