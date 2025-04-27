@@ -108,18 +108,22 @@ exports.createReview = async (req, res, next) => {
     // }
 
     const review = await Review.create(req.body);
+
+    const camp = await Camp.findById(review.campgroundId);
+
+    const total = camp.avgRating * camp.reviewCount;
+    const newCount = camp.reviewCount + 1;
+    const newAvg = (total + review.rating) / newCount;
+
+    camp.reviewCount = newCount;
+    camp.avgRating = newAvg;
+
+    await camp.save();
+
     res.status(201).json({
       success: true,
       data: review,
     });
-
-    const camp = await Camp.findById(review.campgroundId);
-
-    const newReview = (camp.avgRating+review.rating)/camp.reviewCount;
-
-    camp.avgRating = newReview;
-
-    camp.save();
 
 
   } catch (err) {
