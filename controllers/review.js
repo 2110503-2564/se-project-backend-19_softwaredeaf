@@ -1,4 +1,5 @@
 const Review = require("../models/Review");
+const Camp = require("../models/Camp.js")
 const {
   generateFileName,
   uploadFile,
@@ -111,6 +112,16 @@ exports.createReview = async (req, res, next) => {
       success: true,
       data: review,
     });
+
+    const camp = await Camp.findById(review.campgroundId);
+
+    const newReview = (camp.avgRating+review.rating)/camp.reviewCount;
+
+    camp.avgRating = newReview;
+
+    camp.save();
+
+
   } catch (err) {
     console.log(err);
     res.status(500).json({
