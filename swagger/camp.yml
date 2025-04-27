@@ -1,3 +1,188 @@
+components:
+  schemas:
+    Camp:
+      type: object
+      required:
+        - name
+        - address
+        - district
+        - province
+        - postalcode
+        - region
+        - tel
+        - owner
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The auto-generated id of the camp
+          example: 60f5a5b6f4af1a1a3c8d8f98
+        name:
+          type: string
+          description: Name of the campground
+          example: Sunny Campground
+        address:
+          type: string
+          description: Full address of the campground
+          example: 1234 Sunshine St, Sunshine City
+        district:
+          type: string
+          description: District where the campground is located
+          example: Central District
+        province:
+          type: string
+          description: Province where the campground is located
+          example: Sun Province
+        postalcode:
+          type: string
+          description: Postal code of the campground
+          example: "12345"
+        region:
+          type: string
+          description: Region where the campground is located
+          example: Central
+        tel:
+          type: string
+          description: Phone number of the campground
+          example: "012-3456789"
+        picture:
+          type: string
+          description: URL of the campground's picture
+          example: https://drive.google.com/uc?export=download&id=1oKpto0UrtlCWBrbyHJ4AriK7IKP_c9cz
+        createdAt:
+          type: string
+          format: date-time
+          description: The date when the campground was created
+          example: "2022-10-13T14:25:43.511Z"
+        owner:
+          type: string
+          description: The ID of the user who owns the campground
+          example: 60f5a5b6f4af1a1a3c8d8f97
+      example:
+        name: Sunny Campground
+        address: 1234 Sunshine St, Sunshine City
+        district: Central District
+        province: Sun Province
+        postalcode: "12345"
+        region: Central
+        tel: "012-3456789"
+        picture: https://drive.google.com/uc?export=download&id=1oKpto0UrtlCWBrbyHJ4AriK7IKP_c9cz
+        createdAt: "2022-10-13T14:25:43.511Z"
+        owner: 60f5a5b6f4af1a1a3c8d8f97
+
 tags:
-  name: Camps
-  description: The campgrounds managing API
+  - name: Camps
+    description: The campgrounds managing API
+
+paths:
+  /camps:
+    get:
+      tags:
+        - Camps
+      summary: Get all campgrounds
+      responses:
+        '200':
+          description: A list of campgrounds
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Camp'
+    post:
+      tags:
+        - Camps
+      summary: Add a new campground
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Camp'
+      responses:
+        '201':
+          description: Campground created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Camp'
+  /camps/{id}:
+    get:
+      tags:
+        - Camps
+      summary: Get a specific campground by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the campground
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: The campground details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Camp'
+        '404':
+          description: Campground not found
+    put:
+      tags:
+        - Camps
+      summary: Update campground
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the campground
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Camp'
+      responses:
+        '200':
+          description: The campground details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Camp'
+        '404':
+          description: Campground not found
+        '401':
+          description: This user is not authorized to update this booking
+        '400':
+          description: Something went wrong
+    delete:
+      tags:
+        - Camps
+      summary: Update campground
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the campground
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Camp'
+      responses:
+        '200':
+          description: success
+        '404':
+          description: Campground not found
+        '401':
+          description: This user is not authorized to delete this booking
+        '400':
+          description: Something went wrong
