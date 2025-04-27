@@ -3,6 +3,8 @@ const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 const cors = require('cors')
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
 
 //Load env vars
 dotenv.config({ path: "./config/config.env" });
@@ -20,6 +22,7 @@ const campReviews = require('./routes/campReviews');
 const userReviews = require('./routes/userReviews');
 // //by kwan
 const reports = require('./routes/reports');
+const { version } = require("mongoose");
 
 const app = express();
 
@@ -43,6 +46,21 @@ app.use('/api/v1/userreviews', userReviews);
 //by kwan
 app.use('/api/v1/reports',reports);
 
+//swagger by karn
+const swaggerOptions={
+  swaggerDefinition:{
+    openapi: '3.0.0',
+    info: {
+      title: 'Library API',
+      version: '1.0.0',
+      description: 'Campground booking system API by softwaredeaf team'
+    }
+  },
+  apis:['./swagger/*.yml'],
+};
+
+const swaggerDocs=swaggerJsDoc(swaggerOptions);
+app.use('/api-docs',swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 const PORT = process.env.PORT || 5003;
 
