@@ -111,7 +111,7 @@ exports.createReview = async (req, res, next) => {
 
     const camp = await Camp.findById(review.campgroundId);
 
-    const total = camp.avgRating * camp.reviewCount;
+    const total = camp.avgRating ? camp.avgRating * camp.reviewCount : 0;
     const newCount = camp.reviewCount + 1;
     const newAvg = (total + review.rating) / newCount;
 
