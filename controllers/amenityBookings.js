@@ -101,7 +101,7 @@ exports.getAmenityBooking = async (req, res, next) => {
 // @access  Public
 
 exports.getAmenityBookingByBookingId = async (req, res, next) => {
-  
+
   const { bookingId } = req.params;
 
   try {
@@ -191,7 +191,7 @@ exports.addAmenityBooking = async (req, res, next) => {
     });
 
     amenity.amountbooked += amenityBooking.amount;
-    amenity.save();
+    await amenity.save();
 
     res.status(201).json({
       success: true,
@@ -287,7 +287,7 @@ exports.updateAmenityBooking = async (req, res, next) => {
             message: `No campground with the id of ${amenitybooking.campgroundAmenityId.campgroundId}`
         });
     }
-            
+
     if(req.user.role === 'user' && amenitybooking.userId.toString() !== req.user.id)
     {
         return res.status(401).json({
@@ -310,7 +310,7 @@ exports.updateAmenityBooking = async (req, res, next) => {
       { new: true, runValidators: true }
     );
 
-    amenity.save();
+    await amenity.save();
 
     res.status(200).json({
       success: true,
@@ -344,14 +344,14 @@ exports.deleteAmenityBooking = async (req, res, next) => {
 
     //Make sure user is the booking owner
     const campground = await Camp.findById(amenitybooking.campgroundAmenityId.campgroundId);
-    
+
     if(!campground) {
         return res.status(404).json({
             success: false,
             message: `No campground with the id of ${amenitybooking.campgroundAmenityId.campgroundId}`
         });
     }
-            
+
     if(req.user.role === 'user' && amenitybooking.userId.toString() !== req.user.id)
     {
         return res.status(401).json({
@@ -370,7 +370,7 @@ exports.deleteAmenityBooking = async (req, res, next) => {
 
     await amenitybooking.deleteOne();
 
-    amenity.save();
+    await amenity.save();
 
     res.status(200).json({
       success: true,
@@ -408,7 +408,7 @@ exports.deleteAmenityBookingByBookingId = async (req, res, next) => {
             message: `No campground with the id of ${amenitybooking[0].campgroundAmenityId.campgroundId}`
         });
     }
-            
+
     if(req.user.role === 'user' && amenitybooking[0].userId.toString() !== req.user.id)
     {
         return res.status(401).json({
@@ -421,13 +421,13 @@ exports.deleteAmenityBookingByBookingId = async (req, res, next) => {
             message: `User ${req.user.id} is not authorized to delete this bootcamp`
         });
     }
-    
+
     for (const eachBooking of amenitybooking) {
       if (!eachBooking.campgroundAmenityId) continue;
 
       const amenity = await CampgroundAmenity.findById(eachBooking.campgroundAmenityId._id);
       amenity.amountbooked -= eachBooking.amount;
-      amenity.save();
+      await amenity.save();
     }
 
     await AmenityBooking.deleteMany({
