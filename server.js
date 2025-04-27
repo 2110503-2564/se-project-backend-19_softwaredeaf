@@ -54,9 +54,14 @@ const swaggerOptions={
       title: 'Library API',
       version: '1.0.0',
       description: 'Campground booking system API by softwaredeaf team'
-    }
+    },
+    servers: [
+      {
+          url: 'http://localhost:5050/api/v1'
+      }
+    ],
   },
-  apis:['./swagger/*.yml'],
+  apis:['./swagger/camp.yml','./swagger/booking.yml'],
 };
 
 const swaggerDocs=swaggerJsDoc(swaggerOptions);
