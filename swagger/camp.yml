@@ -186,5 +186,3 @@ paths:
           description: This user is not authorized to delete this booking
         '400':
           description: Something went wrong
-
-
