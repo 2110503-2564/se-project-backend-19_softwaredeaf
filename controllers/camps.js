@@ -89,7 +89,7 @@ exports.getCamp = async(req,res,next)=>{
         const camp = await Camp.findById(req.params.id);
 
         if(!camp) {
-            return res.status(400).json({success:false});
+            return res.status(404).json({success:false});
         }
 
         if(camp.picture && !camp.picture.startsWith('http')){

@@ -1,4 +1,4 @@
-const express = require('express');
+  const express = require('express');
 
 const { addAmenityBooking, getAmenityBookings,  getAmenityBooking, deleteAmenityBooking, updateAmenityBooking, getAmenityBookingByBookingId, deleteAmenityBookingByBookingId} = require('../controllers/amenityBookings');
 

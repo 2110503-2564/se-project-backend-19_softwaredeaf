@@ -14,7 +14,6 @@ components:
       properties:
         id:
           type: string
-          format: uuid
           description: The auto-generated id of the camp
           example: 60f5a5b6f4af1a1a3c8d8f98
         name:
@@ -93,6 +92,8 @@ paths:
       tags:
         - Camps
       summary: Add a new campground
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -118,7 +119,6 @@ paths:
           description: The ID of the campground
           schema:
             type: string
-            format: uuid
       responses:
         '200':
           description: The campground details
@@ -132,6 +132,8 @@ paths:
       tags:
         - Camps
       summary: Update campground
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -139,7 +141,6 @@ paths:
           description: The ID of the campground
           schema:
             type: string
-            format: uuid
       requestBody:
         required: true
         content:
@@ -156,13 +157,15 @@ paths:
         '404':
           description: Campground not found
         '401':
-          description: This user is not authorized to update this booking
+          description: This user is not authorized to update this campground
         '400':
           description: Something went wrong
     delete:
       tags:
         - Camps
-      summary: Update campground
+      summary: Delete campground
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -170,19 +173,12 @@ paths:
           description: The ID of the campground
           schema:
             type: string
-            format: uuid
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Camp'
       responses:
         '200':
           description: success
         '404':
           description: Campground not found
         '401':
-          description: This user is not authorized to delete this booking
+          description: This user is not authorized to delete this campground
         '400':
           description: Something went wrong

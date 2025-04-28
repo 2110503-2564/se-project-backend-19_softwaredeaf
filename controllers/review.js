@@ -7,18 +7,13 @@ const {
   deleteFile,
 } = require("./s3.js");
 
-// @desc Get all reviews of the user with the given ID
+// @desc Get review with given ID
 // @route   GET /api/v1/userreviews/:id
 // @access  Private
-exports.getMyReview = async (req, res, next) => {
+exports.getReview = async (req, res, next) => {
   try {
-    if (req.user.id !== req.params.id && req.user.role != "admin") {
-      return res.status(403).json({
-        message: "You are not authorized to view these reviews.",
-      });
-    }
 
-    const myReview = await Review.find()
+    const review = await Review.find({ bookingId: req.params.id })
       .populate({
         path: "userId",
         select: "name",
@@ -28,27 +23,13 @@ exports.getMyReview = async (req, res, next) => {
         select: "name",
       });
 
-    if (myReview.length == 0) {
+    if (review.length==0) {
       return res.status(400).json({
-        message: "No reviews found for this user",
+        message: "No reviews found",
       });
     }
 
-    // for (let eachReview of myReview.data) {
-    //   if (
-    //     eachReview.pictures &&
-    //     !eachCampground.pictures[0].startsWith("http")
-    //   ) {
-    //     let pictures = [];
-    //     for (let eachImage of eachReview.pictures) {
-    //       const urlPicture = await getObjectSignedUrl(eachImage);
-    //       pictures.push(urlPicture);
-    //     }
-    //     eachReview.pictures = pictures;
-    //   }
-    // }
-
-    return res.status(200).json({ success: true, data: myReview });
+    return res.status(200).json({ success: true, data: review });
   } catch (err) {
     console.error(err);
     res.status(500).json({
@@ -57,31 +38,32 @@ exports.getMyReview = async (req, res, next) => {
   }
 };
 
+
 // @desc Get all reviews of the camp with the given ID
 // @route   GET /api/v1/campreviews/:id
 // @access  Public
 exports.getCampReview = async (req, res, next) => {
   try {
     const campReview = await Review.find({ campgroundId: req.params.id });
-    if (campReview.length == 0 || !campReview) {
-      return res.status(404).json({
-        message: "No reviews found for this camp",
-      });
-    }
-
-    // for (let eachReview of campReview.data) {
-    //   if (
-    //     eachReview.pictures &&
-    //     !eachCampground.pictures[0].startsWith("http")
-    //   ) {
-    //     let pictures = [];
-    //     for (let eachImage of eachReview.pictures) {
-    //       const urlPicture = await getObjectSignedUrl(eachImage);
-    //       pictures.push(urlPicture);
-    //     }
-    //     eachReview.pictures = pictures;
-    //   }
+    // if (campReview.length == 0 || !campReview) {
+    //   return res.status(404).json({
+    //     message: "No reviews found for this camp",
+    //   });
     // }
+
+    for (let eachReview of campReview) {
+      if (
+        eachReview.pictures &&
+        !eachCampground.pictures[0].startsWith("http")
+      ) {
+        let pictures = [];
+        for (let eachImage of eachReview.pictures) {
+          const urlPicture = await getObjectSignedUrl(eachImage);
+          pictures.push(urlPicture);
+        }
+        eachReview.pictures = pictures;
+      }
+    }
 
     return res.status(200).json({ success: true, data: campReview });
   } catch (err) {
@@ -97,21 +79,24 @@ exports.getCampReview = async (req, res, next) => {
 // @access Private
 exports.createReview = async (req, res, next) => {
   try {
-    // if (req.file) {
-    //   let pictures = [];
-    //   for (let image of req.file) {
-    //     const filename = generateFileName();
-    //     uploadFile(image, filename, image.mimetype);
-    //     pictures.push(filename);
-    //   }
-    //   req.body.pictures = pictures;
-    // }
+    if (req.files && req.files.length > 0) {
+      let pictures = [];
+      for (let image of req.files) {
+        const filename = generateFileName();
+        await uploadFile(image, filename, image.mimetype);
+        pictures.push(filename);
+      }
+      req.body.pictures = pictures;
+    }
+    req.body.username = req.user.name;
+    req.body.userId = req.user._id;
+
 
     const review = await Review.create(req.body);
 
     const camp = await Camp.findById(review.campgroundId);
 
-    const total = camp.avgRating * camp.reviewCount;
+    const total = camp.avgRating ? camp.avgRating * camp.reviewCount : 0;
     const newCount = camp.reviewCount + 1;
     const newAvg = (total + review.rating) / newCount;
 
@@ -137,12 +122,12 @@ exports.createReview = async (req, res, next) => {
 exports.updateReview = async (req, res, next) => {
   try {
     const review = await Review.findById(req.params.id);
-    if (!review) {
-      return res.status(404).json({
-        success: false,
-        message: `Cannot find review`,
-      });
-    }
+    // if (!review) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: `Cannot find review`,
+    //   });
+    // }
 
     if (req.user.id !== review.userId.toString() && req.user.role != "admin") {
       return res.status(403).json({
@@ -188,19 +173,19 @@ exports.deleteReview = async (req, res, next) => {
         message: "You are not authorized to delete this review.",
       });
     }
-    // let deletePictures;
+    let deletePictures;
 
-    // // if (review.pictures && !review.pictures[0].startsWith("http")) {
-    // //   deletePictures =  review.pictures;
-    // // }
+    if (review.pictures && !review.pictures[0].startsWith("http")) {
+      deletePictures =  review.pictures;
+    }
 
     await Review.deleteOne({ _id: req.params.id });
 
-    // if(deletePictures && deletePictures.length != 0){
-    //   for(let eachPicture of deletePictures){
-    //     await deleteFile(eachPicture);
-    //   }
-    // }
+    if(deletePictures && deletePictures.length > 0){
+      for(let eachPicture of deletePictures){
+        await deleteFile(eachPicture);
+      }
+    }
 
     return res.status(200).json({
       success: true,
@@ -234,19 +219,19 @@ exports.getUserReports = async (req, res, next) => {
 
     const campReview = await Review.find(query);
 
-    // for (let eachReview of campReview) {
-    //   if (
-    //     eachReview.pictures &&
-    //     !eachReview.pictures[0].startsWith("http")
-    //   ) {
-    //     let pictures = [];
-    //     for (let eachImage of eachReview.pictures) {
-    //       const urlPicture = await getObjectSignedUrl(eachImage);
-    //       pictures.push(urlPicture);
-    //     }
-    //     eachReview.pictures = pictures;
-    //   }
-    // }
+    for (let eachReview of campReview) {
+      if (
+        eachReview.pictures &&
+        !eachReview.pictures[0].startsWith("http")
+      ) {
+        let pictures = [];
+        for (let eachImage of eachReview.pictures) {
+          const urlPicture = await getObjectSignedUrl(eachImage);
+          pictures.push(urlPicture);
+        }
+        eachReview.pictures = pictures;
+      }
+    }
 
     return res.status(200).json({ success: true, data: campReview });
   } catch (err) {
