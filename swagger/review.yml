@@ -1,0 +1,74 @@
+CampgroundReview:
+  type: object
+  properties:
+    userId:
+      type: string
+      format: objectId
+      description: Reference to the User
+    username:
+      type: string
+    campgroundId:
+      type: string
+      format: objectId
+      description: Reference to the Camp
+    campgroundName:
+      type: string
+    bookingId:
+      type: string
+      format: objectId
+      description: Reference to the Booking
+    rating:
+      type: number
+      minimum: 0.5
+      maximum: 5
+      description: Must be in 0.5 increments (e.g., 1.0, 1.5, etc.)
+    comment:
+      type: string
+      maxLength: 1000
+    pictures:
+      type: array
+      maxItems: 3
+      items:
+        type: string
+        format: uri
+    status:
+      type: object
+      properties:
+        reported:
+          type: boolean
+          default: false
+    report:
+      type: object
+      properties:
+        reason:
+          type: string
+          enum:
+            - spam
+            - inappropriate
+            - fake
+            - other
+        otherReasonText:
+          type: string
+          maxLength: 200
+  required:
+    - userId
+    - username
+    - campgroundId
+    - campgroundName
+    - bookingId
+    - rating
+    - comment
+  indexes:
+    - fields:
+        campgroundId: 1
+        userId: 1
+      options:
+        unique: true
+
+tags:
+  - name: Campground Review
+    description: The campground review managing API
+
+
+
+  

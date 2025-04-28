@@ -1,6 +1,5 @@
 const express = require("express");
 const {
-  getReview,
   createReview,
   deleteReview,
   updateReview
@@ -19,7 +18,6 @@ router
   .post(protect, authorize("user", "owner", "admin"),upload.array('images',3), createReview);
 router
   .route("/:id")
-  .get(protect, authorize("user", "owner", "admin"), getReview)
   .delete(protect, authorize("user", "admin"), deleteReview)
   .put(protect, authorize("user", "owner", "admin"),upload.array('images',3), updateReview);
 
