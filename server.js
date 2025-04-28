@@ -43,7 +43,7 @@ app.use("/api/v1/bookings", bookings);
 app.use("/api/v1/camps/:campId/amenities", amenities);
 app.use('/api/v1/amenitybookings', amenityBookings);
 app.use('/api/v1/campreviews', campReviews);
-app.use('/api/v1/userreviews', userReviews);
+app.use('/api/v1/reviews', userReviews);
 app.use('/api/v1/bookingreviews', bookingReviews);
 //by kwan
 app.use('/api/v1/reports',reports);
@@ -65,7 +65,7 @@ const swaggerOptions={
   },
 
   apis:['./swagger/user.yml','./swagger/camp.yml','./swagger/booking.yml'
-    ,'./swagger/amenity.yml','./swagger/amenitybooking.yml'],
+    ,'./swagger/amenity.yml','./swagger/amenitybooking.yml','./swagger/review.yml'],
 
   // apis:['./swagger/user.yml','./swagger/camp.yml','./swagger/booking.yml','./swagger/amenity.yml'],
 
