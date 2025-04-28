@@ -20,6 +20,7 @@ const amenities = require("./routes/amenities");
 const amenityBookings = require('./routes/amenityBookings');
 const campReviews = require('./routes/campReviews');
 const userReviews = require('./routes/userReviews');
+const bookingReviews = require('./routes/bookingReviews');
 // //by kwan
 const reports = require('./routes/reports');
 const { version } = require("mongoose");
@@ -43,6 +44,7 @@ app.use("/api/v1/camps/:campId/amenities", amenities);
 app.use('/api/v1/amenitybookings', amenityBookings);
 app.use('/api/v1/campreviews', campReviews);
 app.use('/api/v1/userreviews', userReviews);
+app.use('/api/v1/bookingreviews', bookingReviews);
 //by kwan
 app.use('/api/v1/reports',reports);
 

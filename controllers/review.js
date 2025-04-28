@@ -23,13 +23,24 @@ exports.getReview = async (req, res, next) => {
         select: "name",
       });
 
-    if (review.length==0) {
+    if (review.length == 0) {
       return res.status(400).json({
         message: "No reviews found",
       });
+    }else{
+      for(let eachReview of review){
+        if(eachReview.pictures){
+          let pictures = [];
+          for(let eachPicture of eachReview.pictures){
+            pictures.push(await getObjectSignedUrl(eachPicture));
+          }
+          eachReview.pictures = pictures;
+        }
+      }
+      console.log(review);
+      return res.status(200).json({ success: true, data: review });
     }
 
-    return res.status(200).json({ success: true, data: review });
   } catch (err) {
     console.error(err);
     res.status(500).json({
@@ -133,6 +144,20 @@ exports.updateReview = async (req, res, next) => {
       return res.status(403).json({
         message: "You are not authorized to edit this review.",
       });
+    }
+
+    if (req.files && req.files.length > 0) {
+      let pictures = [];
+      for (let image of req.files) {
+        const filename = generateFileName();
+        await uploadFile(image, filename, image.mimetype);
+        pictures.push(filename);
+      }
+      req.body.pictures = pictures;
+
+      for(let picture of review.pictures){
+        await deleteFile(picture);
+      }
     }
 
     if (req.body.rating !== undefined) review.rating = req.body.rating;
