@@ -21,7 +21,7 @@ router
   .route("/:id")
   .get(protect, authorize("user", "owner", "admin"), getReview)
   .delete(protect, authorize("user", "admin"), deleteReview)
-  .put(protect, authorize("user", "owner", "admin"), updateReview);
+  .put(protect, authorize("user", "owner", "admin"),upload.array('images',3), updateReview);
 
 
 module.exports = router;
