@@ -50,13 +50,13 @@ components:
           example: 0
 
 tags:
-  - name: Amenity
+  - name: Amenities
     description: The amenities managing API
 
 paths:
   /camps/{campId}/amenities:
     get:
-      tags: [Amenity]
+      tags: [Amenities]
       summary: Get all amenities for a campground
       parameters:
         - name: campId
@@ -76,7 +76,7 @@ paths:
                   $ref: '#/components/schemas/Amenity'
 
     post:
-      tags: [Amenity]
+      tags: [Amenities]
       summary: Add a new amenity to a campground
       security:
         - bearerAuth: []
@@ -99,7 +99,7 @@ paths:
 
   /camps/{campId}/amenities/{amenityId}:
     put:
-      tags: [Amenity]
+      tags: [Amenities]
       summary: Update an existing amenity
       security:
         - bearerAuth: []
@@ -125,7 +125,7 @@ paths:
           description: Amenity updated
 
     delete:
-      tags: [Amenity]
+      tags: [Amenities]
       summary: Delete an amenity
       security:
         - bearerAuth: []
