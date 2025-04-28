@@ -19,6 +19,11 @@ const campgroundReviewSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  bookingId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Booking',
+    required: true,
+  },
   rating: {
     type: Number,
     required: true,

@@ -1,0 +1,145 @@
+components:
+  schemas:
+    Amenity:
+      type: object
+      required:
+        - campgroundId
+        - name
+        - quantity
+        - status
+      properties:
+        campgroundId:
+          type: string
+          description: The ID of the campground this amenity belongs to
+          example: 680594d73fdeda3a02a80f7d
+        name:
+          type: string
+          description: Name of the amenity
+          example: Firepit
+        description:
+          type: string
+          description: Details about the amenity
+          example: One shot one kill
+        image:
+          type: string
+          format: uri
+          description: URL of the amenity's image
+          example: https://example.com/images/firepit.jpg
+        quantity:
+          type: integer
+          description: Available quantity of the amenity
+          example: 6
+        price:
+          type: number
+          description: Cost of using the amenity
+          example: 0
+        status:
+          type: string
+          description: Availability status
+          example: available
+        createdAt:
+          type: string
+          format: date-time
+          example: "2023-04-28T10:00:00.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-04-19T06:12:29.920Z"
+        __v:
+          type: integer
+          example: 0
+
+tags:
+  - name: Amenities
+    description: The amenities managing API
+
+paths:
+  /camps/{campId}/amenities:
+    get:
+      tags: [Amenities]
+      summary: Get all amenities for a campground
+      parameters:
+        - name: campId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the campground
+      responses:
+        '200':
+          description: List of amenities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Amenity'
+
+    post:
+      tags: [Amenities]
+      summary: Add a new amenity to a campground
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: campId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the campground
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Amenity'
+      responses:
+        '201':
+          description: Amenity created
+
+  /camps/{campId}/amenities/{amenityId}:
+    put:
+      tags: [Amenities]
+      summary: Update an existing amenity
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: campId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: amenityId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Amenity'
+      responses:
+        '200':
+          description: Amenity updated
+
+    delete:
+      tags: [Amenities]
+      summary: Delete an amenity
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: campId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: amenityId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Amenity deleted
