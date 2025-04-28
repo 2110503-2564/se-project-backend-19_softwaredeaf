@@ -69,7 +69,7 @@ exports.getCampReview = async (req, res, next) => {
     //   });
     // }
 
-    for (let eachReview of campReview.data) {
+    for (let eachReview of campReview) {
       if (
         eachReview.pictures &&
         !eachCampground.pictures[0].startsWith("http")
@@ -106,6 +106,9 @@ exports.createReview = async (req, res, next) => {
       }
       req.body.pictures = pictures;
     }
+    req.body.username = req.user.name;
+    req.body.userId = req.user._id;
+
 
     const review = await Review.create(req.body);
 
