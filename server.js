@@ -65,7 +65,7 @@ const swaggerOptions={
   },
 
   apis:['./swagger/user.yml','./swagger/camp.yml','./swagger/booking.yml'
-    ,'./swagger/amenity.yml','./swagger/amenitybooking.yml'],
+    ,'./swagger/amenity.yml','./swagger/amenitybooking.yml','./swagger/review.yml'],
 
   // apis:['./swagger/user.yml','./swagger/camp.yml','./swagger/booking.yml','./swagger/amenity.yml'],
 

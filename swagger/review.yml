@@ -66,9 +66,321 @@ CampgroundReview:
         unique: true
 
 tags:
-  - name: Campground Review
+  - name: Campground Reviews
     description: The campground review managing API
 
+paths:
+  /bookingreviews/{id}:
+    get:
+      tags:
+        - Campground Reviews
+      summary: Get a specific campground review by bookingID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the booking
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The campground review details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampgroundReview'
+        '404':
+          description: Review not found
 
+  /campreviews/{id}:
+    get:
+      tags:
+        - Campground Reviews
+      summary: Get a specific campground review by campID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the campground
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The campground review details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampgroundReview'
+        '404':
+          description: Review not found
 
-  
+  /reviews:
+    post:
+      summary: Create a new review
+      description: Create a new review for a campground. Updates the campground's average rating and review count.
+      tags:
+        - Campground Reviews
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                campgroundId:
+                  type: string
+                  description: ID of the campground to review
+                  example: "6607cc437e1f82c16c6caa99"
+                rating:
+                  type: number
+                  format: float
+                  description: Rating for the campground
+                  example: 4.0
+                comment:
+                  type: string
+                  description: Review comment
+                  example: "Beautiful campsite, very clean facilities."
+                pictures:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Pictures uploaded with the review
+      responses:
+        '201':
+          description: Review created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Review'
+        '500':
+          description: Server error when creating review
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error creating review. Please try again"
+      
+
+  /reviews/{id}:
+    put:
+      summary: Update a review by ID
+      description: Update an existing review. Only the review owner or an admin can update a review. Also handles picture uploads and campground average rating recalculation.
+      tags:
+        - Campground Reviews
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the review to update
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                rating:
+                  type: number
+                  format: float
+                  example: 4.5
+                comment:
+                  type: string
+                  example: "Amazing place! Highly recommended."
+                pictures:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Review updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Review updated successfully."
+                  review:
+                    $ref: '#/components/schemas/Review'
+        '403':
+          description: Not authorized to edit this review
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "You are not authorized to edit this review."
+        '500':
+          description: Server error when updating review
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error updating review. Please try again"
+
+    delete:
+      summary: Delete a review by ID
+      description: Deletes a review and updates the campground's average rating and review count.
+      tags:
+        - Campground Reviews
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the review to delete
+          example: "6607cd8c7e1f82c16c6cb456"
+      responses:
+        '200':
+          description: Review deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    example: {}
+        '403':
+          description: Forbidden - User not authorized to delete this review
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "You are not authorized to delete this review."
+        '404':
+          description: Review not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Cannot find review"
+        '500':
+          description: Server error when deleting review
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error deleting review. Please try again"
+
+  /reports?username=searchTerm&camp=searchTerm:
+    get:
+      summary: Get all reported reviews with optional search by username or campground name
+      description: Retrieve all reviews that have been reported, filtered optionally by username or campground name.
+      tags:
+        - Campground Reviews
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: username
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search term to filter reviews by username (case-insensitive).
+          example: "john"
+        - name: campname
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search term to filter reviews by campground name (case-insensitive).
+          example: "SunnyCamp"
+      responses:
+        '200':
+          description: List of reported reviews
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          example: "6607cd8c7e1f82c16c6cb456"
+                        username:
+                          type: string
+                          example: "john_doe"
+                        campgroundName:
+                          type: string
+                          example: "SunnyCamp"
+                        pictures:
+                          type: array
+                          items:
+                            type: string
+                            example: "https://your-s3-url.com/picture1.jpg"
+                        rating:
+                          type: number
+                          example: 4
+                        comment:
+                          type: string
+                          example: "Great place!"
+                        status:
+                          type: object
+                          properties:
+                            reported:
+                              type: boolean
+                              example: true
+        '500':
+          description: Server error while fetching reported reviews
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Server error"
