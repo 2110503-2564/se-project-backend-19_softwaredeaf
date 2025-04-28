@@ -1,0 +1,150 @@
+components:
+  schemas:
+    AmenityBooking:
+      type: object
+      required:
+        - campgroundBookingId
+        - userId
+        - campgroundAmenityId
+        - amount
+        - startDate
+        - endDate
+      properties:
+        campgroundBookingId:
+          type: string
+          description: ID of the campground booking
+          example: 6805b26ef8974e2fd7ebf820
+        userId:
+          type: string
+          description: ID of the user
+          example: 6803889c753927bcb3e97fa0
+        campgroundAmenityId:
+          type: string
+          description: ID of the campground amenity
+          example: 680cf47e21bd6903406d3420
+        amount:
+          type: integer
+          description: Number of amenities booked
+          example: 2
+        startDate:
+          type: string
+          format: date-time
+          description: Start date of the amenity booking
+          example: "2025-05-10T00:00:00.000Z"
+        endDate:
+          type: string
+          format: date-time
+          description: End date of the amenity booking
+          example: "2025-05-12T00:00:00.000Z"
+        __v:
+          type: integer
+          example: 0
+
+tags:
+  - name: Amenity Booking
+    description: The amenity bookings managing API
+
+paths:
+  /amenitybookings:
+    get:
+      tags: [Amenity Booking]
+      summary: Get all amenity bookings
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of all amenity bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AmenityBooking'
+
+  /amenitybookings/{bookingId}:
+    get:
+      tags: [Amenity Booking]
+      summary: Get one amenity booking by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Amenity booking data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AmenityBooking'
+
+    put:
+      tags: [Amenity Booking]
+      summary: Update an amenity booking
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AmenityBooking'
+      responses:
+        '200':
+          description: Amenity booking updated
+
+  /amenitybookings/bookings/{bookingId}:
+    get:
+      tags: [Amenity Booking]
+      summary: Get amenity info by campground booking ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Related amenity details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AmenityBooking'
+
+  /bookings/{campgroundBookingId}/amenities/{amenityId}/amenitybookings:
+    post:
+      tags: [Amenity Booking]
+      summary: Add new amenity booking
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: campgroundBookingId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: amenityId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AmenityBooking'
+      responses:
+        '201':
+          description: Amenity booking created
