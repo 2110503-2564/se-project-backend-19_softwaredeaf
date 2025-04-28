@@ -49,8 +49,6 @@ paths:
     get:
       tags: [Amenity Booking]
       summary: Get all amenity bookings
-      security:
-        - bearerAuth: []
       responses:
         '200':
           description: List of all amenity bookings
@@ -101,6 +99,25 @@ paths:
       responses:
         '200':
           description: Amenity booking updated
+
+    delete:
+      tags: [Amenity Booking]
+      summary: Delete an amenity booking
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Amenity booking deleted successfully
+        '404':
+          description: Amenity booking not found
+        '401':
+          description: Unauthorized to delete this amenity booking
 
   /amenitybookings/bookings/{bookingId}:
     get:
