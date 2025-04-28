@@ -192,6 +192,43 @@ exports.updateReview = async (req, res, next) => {
   }
 };
 
+exports.reportReview = async (req, res, next) => {
+  try {
+    const review = await Review.findById(req.params.id);
+    // if (!review) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: `Cannot find review`,
+    //   });
+    // }
+    const camp = await Camp.findById(review.campgroundId);
+
+    if (req.user.role != "owner" && req.user.role != "admin" && (req.user.role == "owner" && req.user.id != camp.owner._id)) {
+      return res.status(403).json({
+        message: "You are not authorized to edit this review.",
+      });
+    }
+
+    review.status.reported = req.body.status.reported;
+    review.report.reason = req.body.report.reason;
+    review.report.otherReasonText = req.body.otherReasonText
+
+    review.save();
+
+
+    res.status(200).json({
+      success: true,
+      message: "Report successfully.",
+      review,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Error updating review. Please try again",
+    });
+  }
+};
+
 // @desc    Delete a review by ID
 // @route   DELETE /api/v1/userreviews/:id
 // @access  Private
