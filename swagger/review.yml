@@ -164,7 +164,7 @@ paths:
                     type: boolean
                     example: true
                   data:
-                    $ref: '#/components/schemas/Review'
+                    $ref: '#/components/schemas/CampgroundReview'
         '500':
           description: Server error when creating review
           content:
@@ -226,7 +226,7 @@ paths:
                     type: string
                     example: "Review updated successfully."
                   review:
-                    $ref: '#/components/schemas/Review'
+                    $ref: '#/components/schemas/CampgroundReview'
         '403':
           description: Not authorized to edit this review
           content:
