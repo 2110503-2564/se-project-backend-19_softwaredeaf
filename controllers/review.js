@@ -29,7 +29,8 @@ exports.getReview = async (req, res, next) => {
       });
     }else{
       for(let eachReview of review){
-        if(eachReview.pictures){
+        if(eachReview.pictures && eachReview.pictures.length > 0 &&
+          !eachReview.pictures[0].startsWith("http")){
           let pictures = [];
           for(let eachPicture of eachReview.pictures){
             pictures.push(await getObjectSignedUrl(eachPicture));
@@ -116,6 +117,8 @@ exports.createReview = async (req, res, next) => {
 
     await camp.save();
 
+    console.log('Review Create' + review)
+
     res.status(201).json({
       success: true,
       data: review,
@@ -160,11 +163,22 @@ exports.updateReview = async (req, res, next) => {
       }
     }
 
+    const camp = await Camp.findById(review.campgroundId);
+
+    const total = camp.avgRating ? camp.avgRating * camp.reviewCount : 0;
+    const newAvg = (total + (req.body.rating - review.rating)) / camp.reviewCount;
+
+    camp.avgRating = newAvg;
+
+    await camp.save();
+
     if (req.body.rating !== undefined) review.rating = req.body.rating;
     if (req.body.comment !== undefined) review.comment = req.body.comment;
     if (req.body.pictures !== undefined) review.pictures = req.body.pictures;
 
     await review.save();
+
+
     res.status(200).json({
       success: true,
       message: "Review updated successfully.",
@@ -202,18 +216,16 @@ exports.deleteReview = async (req, res, next) => {
     const camp = await Camp.findById(review.campgroundId);
 
     const total = camp.avgRating ? camp.avgRating * camp.reviewCount : 0;
-    const newCount = camp.reviewCount - 1;
-    const newAvg =newCount == 0 ? 0 : (total - review.rating) / newCount;
+    const newCount = camp.reviewCount - 1 <= 0 ? 0 : camp.reviewCount - 1;
+    const newAvg = newCount == 0 ? 0 : (total - review.rating) / newCount;
 
     camp.reviewCount = newCount;
     camp.avgRating = newAvg;
 
     await camp.save();
 
-    if (review.pictures) {
-      if(!review.pictures[0].startsWith("http")){
+    if (review.pictures && review.pictures.length > 0 && !review.pictures[0].startsWith('http')) {
         deletePictures =  review.pictures;
-      }
     }
 
     await Review.deleteOne({ _id: req.params.id });
