@@ -69,19 +69,19 @@ exports.getCampReview = async (req, res, next) => {
     //   });
     // }
 
-    // for (let eachReview of campReview.data) {
-    //   if (
-    //     eachReview.pictures &&
-    //     !eachCampground.pictures[0].startsWith("http")
-    //   ) {
-    //     let pictures = [];
-    //     for (let eachImage of eachReview.pictures) {
-    //       const urlPicture = await getObjectSignedUrl(eachImage);
-    //       pictures.push(urlPicture);
-    //     }
-    //     eachReview.pictures = pictures;
-    //   }
-    // }
+    for (let eachReview of campReview.data) {
+      if (
+        eachReview.pictures &&
+        !eachCampground.pictures[0].startsWith("http")
+      ) {
+        let pictures = [];
+        for (let eachImage of eachReview.pictures) {
+          const urlPicture = await getObjectSignedUrl(eachImage);
+          pictures.push(urlPicture);
+        }
+        eachReview.pictures = pictures;
+      }
+    }
 
     return res.status(200).json({ success: true, data: campReview });
   } catch (err) {
@@ -97,15 +97,15 @@ exports.getCampReview = async (req, res, next) => {
 // @access Private
 exports.createReview = async (req, res, next) => {
   try {
-    // if (req.file) {
-    //   let pictures = [];
-    //   for (let image of req.file) {
-    //     const filename = generateFileName();
-    //     uploadFile(image, filename, image.mimetype);
-    //     pictures.push(filename);
-    //   }
-    //   req.body.pictures = pictures;
-    // }
+    if (req.files && req.files.length > 0) {
+      let pictures = [];
+      for (let image of req.files) {
+        const filename = generateFileName();
+        await uploadFile(image, filename, image.mimetype);
+        pictures.push(filename);
+      }
+      req.body.pictures = pictures;
+    }
 
     const review = await Review.create(req.body);
 
@@ -188,19 +188,19 @@ exports.deleteReview = async (req, res, next) => {
         message: "You are not authorized to delete this review.",
       });
     }
-    // let deletePictures;
+    let deletePictures;
 
-    // // if (review.pictures && !review.pictures[0].startsWith("http")) {
-    // //   deletePictures =  review.pictures;
-    // // }
+    if (review.pictures && !review.pictures[0].startsWith("http")) {
+      deletePictures =  review.pictures;
+    }
 
     await Review.deleteOne({ _id: req.params.id });
 
-    // if(deletePictures && deletePictures.length != 0){
-    //   for(let eachPicture of deletePictures){
-    //     await deleteFile(eachPicture);
-    //   }
-    // }
+    if(deletePictures && deletePictures.length > 0){
+      for(let eachPicture of deletePictures){
+        await deleteFile(eachPicture);
+      }
+    }
 
     return res.status(200).json({
       success: true,
@@ -234,19 +234,19 @@ exports.getUserReports = async (req, res, next) => {
 
     const campReview = await Review.find(query);
 
-    // for (let eachReview of campReview) {
-    //   if (
-    //     eachReview.pictures &&
-    //     !eachReview.pictures[0].startsWith("http")
-    //   ) {
-    //     let pictures = [];
-    //     for (let eachImage of eachReview.pictures) {
-    //       const urlPicture = await getObjectSignedUrl(eachImage);
-    //       pictures.push(urlPicture);
-    //     }
-    //     eachReview.pictures = pictures;
-    //   }
-    // }
+    for (let eachReview of campReview) {
+      if (
+        eachReview.pictures &&
+        !eachReview.pictures[0].startsWith("http")
+      ) {
+        let pictures = [];
+        for (let eachImage of eachReview.pictures) {
+          const urlPicture = await getObjectSignedUrl(eachImage);
+          pictures.push(urlPicture);
+        }
+        eachReview.pictures = pictures;
+      }
+    }
 
     return res.status(200).json({ success: true, data: campReview });
   } catch (err) {
