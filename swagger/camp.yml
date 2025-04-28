@@ -88,6 +88,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Camp'
+        '400':
+          description: Fail to fetch campgrounds
     post:
       tags:
         - Camps
@@ -107,6 +109,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Camp'
+        '400':
+          description: Fail to create a campground
   /camps/{id}:
     get:
       tags:
@@ -128,6 +132,8 @@ paths:
                 $ref: '#/components/schemas/Camp'
         '404':
           description: Campground not found
+        '400':
+          description: Fail to get the campground
     put:
       tags:
         - Camps
@@ -159,7 +165,7 @@ paths:
         '401':
           description: This user is not authorized to update this campground
         '400':
-          description: Something went wrong
+          description: Fail to update campground
     delete:
       tags:
         - Camps

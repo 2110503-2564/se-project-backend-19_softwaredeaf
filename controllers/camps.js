@@ -79,7 +79,7 @@ exports.getCamps = async (req, res, next) => {
     }
 };
 
-  
+
 
 //@desc     Get single camps
 //@route    GET /api/v1/camps/:id

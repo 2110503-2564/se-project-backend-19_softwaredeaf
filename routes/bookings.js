@@ -10,10 +10,10 @@ const amenityBookingRouter = require('./amenityBookings');
 router.use('/:bookingId/amenities/:amenityId/amenitybookings',amenityBookingRouter);
 
 router.route('/')
-    .get(protect, getBookings)
+    .get(protect,authorize('admin','user','owner'), getBookings)//add authorize by kwan
     .post(protect, authorize('admin','user','owner'), addBooking);
 router.route('/:id')
-    .get(protect, getBooking)
+    .get(protect, authorize('admin','user','owner'),getBooking)//add authorize by kwan
     .put(protect, authorize('admin','user','owner'), updateBooking)
     .delete(protect, authorize('admin','user','owner'), deleteBooking);
 

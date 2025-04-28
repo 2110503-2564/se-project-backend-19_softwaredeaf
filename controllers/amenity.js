@@ -26,7 +26,7 @@ exports.getAmenity = async (req, res, next) => {
 
   } catch (error) {
     console.log(error);
-    return res.status(400).json({
+    return res.status(500).json({
       success: false,
       message: error,
     });
@@ -106,7 +106,7 @@ exports.updateAmenity = async (req, res, next) => {
     });
 
     if (!updateamenity) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         message: `Amenity not found`,
       });
@@ -137,7 +137,7 @@ exports.deleteAmenity = async (req, res, next) => {
     }
     const amenity = await Amenity.findById(req.params.id);
     if (!amenity) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         message: `Amenity not found`,
       });

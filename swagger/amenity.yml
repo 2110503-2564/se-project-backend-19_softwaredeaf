@@ -74,6 +74,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Amenity'
+        '500':
+          description: Fail to fetch amenitites
 
     post:
       tags: [Amenities]
@@ -96,6 +98,10 @@ paths:
       responses:
         '201':
           description: Amenity created
+        '401':
+          description: User is not authorized
+        '400':
+          description: Fail to create amenity / bad request
 
   /camps/{campId}/amenities/{amenityId}:
     put:
@@ -123,6 +129,12 @@ paths:
       responses:
         '200':
           description: Amenity updated
+        '404':
+          description: Amenity not found
+        '400':
+          description: Fail to update amenity / bad request
+        '401':
+          description: User is not authorized
 
     delete:
       tags: [Amenities]
@@ -143,3 +155,9 @@ paths:
       responses:
         '200':
           description: Amenity deleted
+        '404':
+          description: Amenity not found
+        '400':
+          description: Fail to delete amenity / bad request
+        '401':
+          description: User is not authorized

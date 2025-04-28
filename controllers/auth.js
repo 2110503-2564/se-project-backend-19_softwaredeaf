@@ -21,7 +21,7 @@ exports.register = async (req, res, next) => {
     console.log(err);
   }
 };
-
+ 
 //@desc Login user
 //@route POST /api/v1/auth/login
 //@access Public
@@ -44,7 +44,7 @@ exports.login = async (req, res, next) => {
     if (!user) {
       return res
         .status(400)
-        .json({ sucess: false, msg: "Invalid credentials" });
+        .json({ success: false, msg: "Invalid credentials" });
     }
 
     // Check if password matches
