@@ -199,16 +199,30 @@ exports.deleteReview = async (req, res, next) => {
       });
     }
     let deletePictures;
+    const camp = await Camp.findById(review.campgroundId);
 
-    if (review.pictures && !review.pictures[0].startsWith("http")) {
-      deletePictures =  review.pictures;
+    const total = camp.avgRating ? camp.avgRating * camp.reviewCount : 0;
+    const newCount = camp.reviewCount - 1;
+    const newAvg =newCount == 0 ? 0 : (total - review.rating) / newCount;
+
+    camp.reviewCount = newCount;
+    camp.avgRating = newAvg;
+
+    await camp.save();
+
+    if (review.pictures) {
+      if(!review.pictures[0].startsWith("http")){
+        deletePictures =  review.pictures;
+      }
     }
 
     await Review.deleteOne({ _id: req.params.id });
 
     if(deletePictures && deletePictures.length > 0){
       for(let eachPicture of deletePictures){
-        await deleteFile(eachPicture);
+        if(!eachPicture.startsWith("http")){
+          await deleteFile(eachPicture);
+        }
       }
     }
 
