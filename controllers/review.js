@@ -54,7 +54,7 @@ exports.getCampReview = async (req, res, next) => {
     for (let eachReview of campReview) {
       if (
         eachReview.pictures &&
-        !eachCampground.pictures[0].startsWith("http")
+        !eachReview.pictures[0].startsWith("http")
       ) {
         let pictures = [];
         for (let eachImage of eachReview.pictures) {
