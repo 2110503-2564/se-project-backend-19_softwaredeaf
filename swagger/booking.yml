@@ -68,10 +68,88 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Booking'
+  /bookings/{id}:
+    get:
+      tags:
+        - Bookings
+      summary: Get a specific booking by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the booking
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The booking details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '404':
+          description: Booking not found
+    put:
+      tags:
+        - Bookings
+      summary: Update booking
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the booking
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking'
+      responses:
+        '200':
+          description: The booking details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '404':
+          description: Booking not found
+        '401':
+          description: This user is not authorized to update this booking
+        '400':
+          description: Something went wrong
+    delete:
+      tags:
+        - Bookings
+      summary: Delete booking
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the booking
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+        '404':
+          description: Booking not found
+        '401':
+          description: This user is not authorized to delete this booking
+        '400':
+          description: Something went wrong
+  /camps/{campId}/booking:
     post:
       tags:
         - Bookings
       summary: Add a new booking
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -85,25 +163,3 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Booking'
-  /bookings/{id}:
-    get:
-      tags:
-        - Bookings
-      summary: Get a specific booking by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The ID of the booking
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: The booking details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Booking'
-        '404':
-          description: Booking not found

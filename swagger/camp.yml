@@ -157,13 +157,13 @@ paths:
         '404':
           description: Campground not found
         '401':
-          description: This user is not authorized to update this booking
+          description: This user is not authorized to update this campground
         '400':
           description: Something went wrong
     delete:
       tags:
         - Camps
-      summary: Update campground
+      summary: Delete campground
       security:
         - bearerAuth: []
       parameters:
@@ -179,6 +179,6 @@ paths:
         '404':
           description: Campground not found
         '401':
-          description: This user is not authorized to delete this booking
+          description: This user is not authorized to delete this campground
         '400':
           description: Something went wrong
