@@ -41,13 +41,13 @@ components:
           example: 0
 
 tags:
-  - name: Amenity Booking
+  - name: Amenity Bookings
     description: The amenity bookings managing API
 
 paths:
   /amenitybookings:
     get:
-      tags: [Amenity Booking]
+      tags: [Amenity Bookings]
       summary: Get all amenity bookings
       responses:
         '200':
@@ -61,7 +61,7 @@ paths:
 
   /amenitybookings/{bookingId}:
     get:
-      tags: [Amenity Booking]
+      tags: [Amenity Bookings]
       summary: Get one amenity booking by ID
       security:
         - bearerAuth: []
@@ -80,7 +80,7 @@ paths:
                 $ref: '#/components/schemas/AmenityBooking'
 
     put:
-      tags: [Amenity Booking]
+      tags: [Amenity Bookings]
       summary: Update an amenity booking
       security:
         - bearerAuth: []
@@ -101,7 +101,7 @@ paths:
           description: Amenity booking updated
 
     delete:
-      tags: [Amenity Booking]
+      tags: [Amenity Bookings]
       summary: Delete an amenity booking
       security:
         - bearerAuth: []
@@ -121,7 +121,7 @@ paths:
 
   /amenitybookings/bookings/{bookingId}:
     get:
-      tags: [Amenity Booking]
+      tags: [Amenity Bookings]
       summary: Get amenity info by campground booking ID
       security:
         - bearerAuth: []
@@ -141,7 +141,7 @@ paths:
 
   /bookings/{campgroundBookingId}/amenities/{amenityId}/amenitybookings:
     post:
-      tags: [Amenity Booking]
+      tags: [Amenity Bookings]
       summary: Add new amenity booking
       security:
         - bearerAuth: []
