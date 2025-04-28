@@ -7,18 +7,13 @@ const {
   deleteFile,
 } = require("./s3.js");
 
-// @desc Get all reviews of the user with the given ID
+// @desc Get review with given ID
 // @route   GET /api/v1/userreviews/:id
 // @access  Private
-exports.getMyReview = async (req, res, next) => {
+exports.getReview = async (req, res, next) => {
   try {
-    if (req.user.id !== req.params.id && req.user.role != "admin") {
-      return res.status(403).json({
-        message: "You are not authorized to view these reviews.",
-      });
-    }
 
-    const myReview = await Review.find()
+    const review = await Review.find({ bookingId: req.params.id })
       .populate({
         path: "userId",
         select: "name",
@@ -28,27 +23,13 @@ exports.getMyReview = async (req, res, next) => {
         select: "name",
       });
 
-    if (myReview.length == 0) {
+    if (review.length==0) {
       return res.status(400).json({
-        message: "No reviews found for this user",
+        message: "No reviews found",
       });
     }
 
-    // for (let eachReview of myReview.data) {
-    //   if (
-    //     eachReview.pictures &&
-    //     !eachCampground.pictures[0].startsWith("http")
-    //   ) {
-    //     let pictures = [];
-    //     for (let eachImage of eachReview.pictures) {
-    //       const urlPicture = await getObjectSignedUrl(eachImage);
-    //       pictures.push(urlPicture);
-    //     }
-    //     eachReview.pictures = pictures;
-    //   }
-    // }
-
-    return res.status(200).json({ success: true, data: myReview });
+    return res.status(200).json({ success: true, data: review });
   } catch (err) {
     console.error(err);
     res.status(500).json({
@@ -56,6 +37,7 @@ exports.getMyReview = async (req, res, next) => {
     });
   }
 };
+
 
 // @desc Get all reviews of the camp with the given ID
 // @route   GET /api/v1/campreviews/:id
