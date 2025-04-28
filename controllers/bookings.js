@@ -16,10 +16,14 @@ exports.getBookings = async (req, res, next) => {
           select: "name province tel picture",
         });
       }else{
-        query = Booking.find({ user: req.user.id }).populate({
-          path: "camp",
-          select: "name province tel picture",
-        });
+        const ownedCamps = await Camp.find({ owner: req.user.id }).select("_id");
+        const campIds = ownedCamps.map(camp => camp._id);
+    
+        query = Booking.find({ camp: { $in: campIds } })
+          .populate({
+            path: "camp",
+            select: "name province tel picture",
+          });
       }
     }else{
       query = Booking.find({ user: req.user.id }).populate({
