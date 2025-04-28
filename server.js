@@ -62,10 +62,10 @@ const swaggerOptions={
     ],
   },
 
-  // apis:['./swagger/user.yml','./swagger/camp.yml','./swagger/booking.yml'
-  //   ,'./swagger/amenity.yml','./swagger/amenitybooking.yml'],
+  apis:['./swagger/user.yml','./swagger/camp.yml','./swagger/booking.yml'
+    ,'./swagger/amenity.yml','./swagger/amenitybooking.yml'],
 
-  apis:['./swagger/user.yml','./swagger/camp.yml','./swagger/booking.yml','./swagger/amenity.yml'],
+  // apis:['./swagger/user.yml','./swagger/camp.yml','./swagger/booking.yml','./swagger/amenity.yml'],
 
 };
 
