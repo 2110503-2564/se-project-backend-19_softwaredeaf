@@ -51,7 +51,19 @@ const CampSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'Campground must have an owner'],
+  },
+  avgRating: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 5,
+  },
+  reviewCount: {
+    type: Number,
+    default: 0,
+    min: 0,
   }
+,
 }, {
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
