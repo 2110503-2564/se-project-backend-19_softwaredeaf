@@ -46,26 +46,6 @@ app.use('/api/v1/userreviews', userReviews);
 //by kwan
 app.use('/api/v1/reports',reports);
 
-//swagger by karn
-const swaggerOptions={
-  swaggerDefinition:{
-    openapi: '3.0.0',
-    info: {
-      title: 'Library API',
-      version: '1.0.0',
-      description: 'Campground booking system API by softwaredeaf team'
-    },
-    servers: [
-      {
-          url: 'http://localhost:5050/api/v1'
-      }
-    ],
-  },
-  apis:['./swagger/user.yml','./swagger/camp.yml','./swagger/booking.yml'],
-};
-
-const swaggerDocs=swaggerJsDoc(swaggerOptions);
-app.use('/api-docs',swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 const PORT = process.env.PORT || 5003;
 

@@ -1,0 +1,109 @@
+components:
+  schemas:
+    Booking:
+      type: object
+      required:
+        - user
+        - camp
+        - name
+        - surname
+        - startDate
+        - endDate
+      properties:
+        user:
+          type: string
+          description: The ID of the user making the booking
+        camp:
+          type: string
+          description: The ID of the campground being booked
+        name:
+          type: string
+          description: The name of the person making the booking
+        surname:
+          type: string
+          description: The surname of the person making the booking
+        startDate:
+          type: string
+          format: date
+          description: Start date of the booking
+        endDate:
+          type: string
+          format: date
+          description: End date of the booking
+        visited:
+          type: boolean
+          description: Whether the booking has been visited
+          default: false
+        createdAt:
+          type: string
+          format: date-time
+          description: The time the booking was created
+      example:
+        user: 60f5a5b6f4af1a1a3c8d8f97
+        camp: 60f5a5b6f4af1a1a3c8d8f98
+        name: John
+        surname: Doe
+        startDate: "2023-05-01"
+        endDate: "2023-05-10"
+        visited: false
+        createdAt: "2023-04-25T14:25:43.511Z"
+
+tags:
+  - name: Bookings
+    description: The campground bookings managing API
+
+
+paths:
+  /bookings:
+    get:
+      tags:
+        - Bookings
+      summary: Get all bookings
+      responses:
+        '200':
+          description: A list of bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Booking'
+    post:
+      tags:
+        - Bookings
+      summary: Add a new booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking'
+      responses:
+        '201':
+          description: Bookings created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+  /bookings/{id}:
+    get:
+      tags:
+        - Bookings
+      summary: Get a specific booking by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the booking
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: The booking details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '404':
+          description: Booking not found

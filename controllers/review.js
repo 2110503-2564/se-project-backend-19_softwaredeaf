@@ -1,4 +1,5 @@
 const Review = require("../models/Review");
+const Camp = require("../models/Camp.js")
 const {
   generateFileName,
   uploadFile,
@@ -62,11 +63,11 @@ exports.getMyReview = async (req, res, next) => {
 exports.getCampReview = async (req, res, next) => {
   try {
     const campReview = await Review.find({ campgroundId: req.params.id });
-    if (campReview.length == 0 || !campReview) {
-      return res.status(404).json({
-        message: "No reviews found for this camp",
-      });
-    }
+    // if (campReview.length == 0 || !campReview) {
+    //   return res.status(404).json({
+    //     message: "No reviews found for this camp",
+    //   });
+    // }
 
     // for (let eachReview of campReview.data) {
     //   if (
@@ -107,10 +108,24 @@ exports.createReview = async (req, res, next) => {
     // }
 
     const review = await Review.create(req.body);
+
+    const camp = await Camp.findById(review.campgroundId);
+
+    const total = camp.avgRating ? camp.avgRating * camp.reviewCount : 0;
+    const newCount = camp.reviewCount + 1;
+    const newAvg = (total + review.rating) / newCount;
+
+    camp.reviewCount = newCount;
+    camp.avgRating = newAvg;
+
+    await camp.save();
+
     res.status(201).json({
       success: true,
       data: review,
     });
+
+
   } catch (err) {
     console.log(err);
     res.status(500).json({
@@ -122,12 +137,12 @@ exports.createReview = async (req, res, next) => {
 exports.updateReview = async (req, res, next) => {
   try {
     const review = await Review.findById(req.params.id);
-    if (!review) {
-      return res.status(404).json({
-        success: false,
-        message: `Cannot find review`,
-      });
-    }
+    // if (!review) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: `Cannot find review`,
+    //   });
+    // }
 
     if (req.user.id !== review.userId.toString() && req.user.role != "admin") {
       return res.status(403).json({
