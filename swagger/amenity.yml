@@ -78,6 +78,8 @@ paths:
     post:
       tags: [Amenity]
       summary: Add a new amenity to a campground
+      security:
+        - bearerAuth: []
       parameters:
         - name: campId
           in: path
@@ -99,6 +101,8 @@ paths:
     put:
       tags: [Amenity]
       summary: Update an existing amenity
+      security:
+        - bearerAuth: []
       parameters:
         - name: campId
           in: path
@@ -123,6 +127,8 @@ paths:
     delete:
       tags: [Amenity]
       summary: Delete an amenity
+      security:
+        - bearerAuth: []
       parameters:
         - name: campId
           in: path
