@@ -64,7 +64,7 @@ exports.getCampReview = async (req, res, next) => {
 
     for (let eachReview of campReview) {
       if (
-        eachReview.pictures &&
+        eachReview.pictures && eachReview.pictures.length > 0 &&
         !eachReview.pictures[0].startsWith("http")
       ) {
         let pictures = [];
