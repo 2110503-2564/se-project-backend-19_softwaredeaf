@@ -8,7 +8,7 @@ const {
 } = require("./s3.js");
 
 // @desc Get review with given ID
-// @route   GET /api/v1/userreviews/:id
+// @route   GET /api/v1/bookingreviews/:id
 // @access  Private
 exports.getReview = async (req, res, next) => {
   try {
@@ -29,7 +29,8 @@ exports.getReview = async (req, res, next) => {
       });
     }else{
       for(let eachReview of review){
-        if(eachReview.pictures){
+        if(eachReview.pictures && eachReview.pictures.length > 0 &&
+          !eachReview.pictures[0].startsWith("http")){
           let pictures = [];
           for(let eachPicture of eachReview.pictures){
             pictures.push(await getObjectSignedUrl(eachPicture));
@@ -86,7 +87,7 @@ exports.getCampReview = async (req, res, next) => {
 };
 
 // @desc Create a new review
-// @route   POST /api/v1/userreviews/
+// @route   POST /api/v1/reviews
 // @access Private
 exports.createReview = async (req, res, next) => {
   try {
@@ -116,6 +117,8 @@ exports.createReview = async (req, res, next) => {
 
     await camp.save();
 
+    console.log('Review Create' + review)
+
     res.status(201).json({
       success: true,
       data: review,
@@ -129,6 +132,10 @@ exports.createReview = async (req, res, next) => {
     });
   }
 };
+
+// @desc    Update a review by ID
+// @route   PUT /api/v1/reviews/:id
+// @access  Private
 
 exports.updateReview = async (req, res, next) => {
   try {
@@ -160,11 +167,22 @@ exports.updateReview = async (req, res, next) => {
       }
     }
 
+    const camp = await Camp.findById(review.campgroundId);
+
+    const total = camp.avgRating ? camp.avgRating * camp.reviewCount : 0;
+    const newAvg = (total + (req.body.rating - review.rating)) / camp.reviewCount;
+
+    camp.avgRating = newAvg;
+
+    await camp.save();
+
     if (req.body.rating !== undefined) review.rating = req.body.rating;
     if (req.body.comment !== undefined) review.comment = req.body.comment;
     if (req.body.pictures !== undefined) review.pictures = req.body.pictures;
 
     await review.save();
+
+
     res.status(200).json({
       success: true,
       message: "Review updated successfully.",
@@ -179,7 +197,7 @@ exports.updateReview = async (req, res, next) => {
 };
 
 // @desc    Delete a review by ID
-// @route   DELETE /api/v1/userreviews/:id
+// @route   DELETE /api/v1/reviews/:id
 // @access  Private
 exports.deleteReview = async (req, res, next) => {
   try {
@@ -202,18 +220,16 @@ exports.deleteReview = async (req, res, next) => {
     const camp = await Camp.findById(review.campgroundId);
 
     const total = camp.avgRating ? camp.avgRating * camp.reviewCount : 0;
-    const newCount = camp.reviewCount - 1;
-    const newAvg =newCount == 0 ? 0 : (total - review.rating) / newCount;
+    const newCount = camp.reviewCount - 1 <= 0 ? 0 : camp.reviewCount - 1;
+    const newAvg = newCount == 0 ? 0 : (total - review.rating) / newCount;
 
     camp.reviewCount = newCount;
     camp.avgRating = newAvg;
 
     await camp.save();
 
-    if (review.pictures) {
-      if(!review.pictures[0].startsWith("http")){
+    if (review.pictures && review.pictures.length > 0 && !review.pictures[0].startsWith('http')) {
         deletePictures =  review.pictures;
-      }
     }
 
     await Review.deleteOne({ _id: req.params.id });
@@ -240,7 +256,7 @@ exports.deleteReview = async (req, res, next) => {
 
 //add by kwan
 // @desc Get all reviews with 'username' consist of searchTerm
-// @route   GET /api/v1/reviews  (with query ?username=searchTerm&camp=searchTerm)
+// @route   GET /api/v1/reports (with query ?username=searchTerm&camp=searchTerm)
 // @access  admin
 exports.getUserReports = async (req, res, next) => {
   const searchUser = req.query.username;
