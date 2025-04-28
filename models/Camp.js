@@ -57,6 +57,7 @@ const CampSchema = new mongoose.Schema({
     default: 0,
     min: 0,
     max: 5,
+    set: val => Math.round(val * 100) / 100,
   },
   reviewCount: {
     type: Number,
