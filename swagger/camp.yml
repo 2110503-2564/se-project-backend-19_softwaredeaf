@@ -93,6 +93,8 @@ paths:
       tags:
         - Camps
       summary: Add a new campground
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
