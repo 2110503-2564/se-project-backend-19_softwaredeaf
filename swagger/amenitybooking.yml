@@ -49,6 +49,8 @@ paths:
     get:
       tags: [Amenity Bookings]
       summary: Get all amenity bookings
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: List of all amenity bookings
@@ -105,7 +107,7 @@ paths:
       responses:
         '200':
           description: Amenity booking updated
-        '404': 
+        '404':
           description: Booking / amenity not found
         '400':
           description: Invalid request (invalid date or amount)
@@ -113,7 +115,7 @@ paths:
           description: User is not authorized
         '500':
           description: Cannot update amenity booking
-        
+
     delete:
       tags: [Amenity Bookings]
       summary: Delete an amenity booking
