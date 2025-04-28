@@ -173,12 +173,6 @@ paths:
           description: The ID of the campground
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Camp'
       responses:
         '200':
           description: success
