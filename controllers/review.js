@@ -133,6 +133,10 @@ exports.createReview = async (req, res, next) => {
   }
 };
 
+// @desc    Update a review by ID
+// @route   PUT /api/v1/reviews/:id
+// @access  Private
+
 exports.updateReview = async (req, res, next) => {
   try {
     const review = await Review.findById(req.params.id);
