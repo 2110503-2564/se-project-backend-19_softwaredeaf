@@ -14,7 +14,6 @@ components:
       properties:
         id:
           type: string
-          format: uuid
           description: The auto-generated id of the camp
           example: 60f5a5b6f4af1a1a3c8d8f98
         name:
@@ -120,7 +119,6 @@ paths:
           description: The ID of the campground
           schema:
             type: string
-            format: uuid
       responses:
         '200':
           description: The campground details
@@ -134,6 +132,8 @@ paths:
       tags:
         - Camps
       summary: Update campground
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -141,7 +141,6 @@ paths:
           description: The ID of the campground
           schema:
             type: string
-            format: uuid
       requestBody:
         required: true
         content:
@@ -165,6 +164,8 @@ paths:
       tags:
         - Camps
       summary: Update campground
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -172,7 +173,6 @@ paths:
           description: The ID of the campground
           schema:
             type: string
-            format: uuid
       requestBody:
         required: true
         content:
