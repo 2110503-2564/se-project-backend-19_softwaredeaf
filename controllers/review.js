@@ -8,7 +8,7 @@ const {
 } = require("./s3.js");
 
 // @desc Get review with given ID
-// @route   GET /api/v1/userreviews/:id
+// @route   GET /api/v1/bookingreviews/:id
 // @access  Private
 exports.getReview = async (req, res, next) => {
   try {
@@ -87,7 +87,7 @@ exports.getCampReview = async (req, res, next) => {
 };
 
 // @desc Create a new review
-// @route   POST /api/v1/userreviews/
+// @route   POST /api/v1/reviews
 // @access Private
 exports.createReview = async (req, res, next) => {
   try {
@@ -193,7 +193,7 @@ exports.updateReview = async (req, res, next) => {
 };
 
 // @desc    Delete a review by ID
-// @route   DELETE /api/v1/userreviews/:id
+// @route   DELETE /api/v1/reviews/:id
 // @access  Private
 exports.deleteReview = async (req, res, next) => {
   try {
@@ -252,7 +252,7 @@ exports.deleteReview = async (req, res, next) => {
 
 //add by kwan
 // @desc Get all reviews with 'username' consist of searchTerm
-// @route   GET /api/v1/reviews  (with query ?username=searchTerm&camp=searchTerm)
+// @route   GET /api/v1/reports (with query ?username=searchTerm&camp=searchTerm)
 // @access  admin
 exports.getUserReports = async (req, res, next) => {
   const searchUser = req.query.username;
