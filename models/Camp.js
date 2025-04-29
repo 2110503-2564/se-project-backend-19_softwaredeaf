@@ -41,7 +41,6 @@ const CampSchema = new mongoose.Schema({
   picture: {
     type: String,
     default: "https://drive.google.com/uc?export=download&id=1oKpto0UrtlCWBrbyHJ4AriK7IKP_c9cz",
-
   },
   createdAt: {
     type: Date,
