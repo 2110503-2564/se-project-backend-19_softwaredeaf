@@ -90,7 +90,9 @@ exports.updateAmenity = async (req, res, next) => {
     }
 
     if(req.file){
-      await deleteFile(amenity.image)
+      if(amenity.image && !amenity.image.startsWith('http')){
+        await deleteFile(amenity.image)
+      }
       const filename = generateFileName();
       const file = req.file;
       req.body.image = filename;
@@ -113,6 +115,7 @@ exports.updateAmenity = async (req, res, next) => {
       data: updateamenity,
     });
   } catch (err) {
+    console.log(err);
     return res.status(400).json({ success: false });
   }
 };
