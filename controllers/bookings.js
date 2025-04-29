@@ -18,7 +18,7 @@ exports.getBookings = async (req, res, next) => {
       }else{
         const ownedCamps = await Camp.find({ owner: req.user.id }).select("_id");
         const campIds = ownedCamps.map(camp => camp._id);
-    
+
         query = Booking.find({ camp: { $in: campIds } })
           .populate({
             path: "camp",
@@ -171,7 +171,7 @@ exports.updateBooking = async (req, res, next) => {
     }
 
     if (req.user.role === "user" && booking.user.toString() !== req.user.id) {
-      return res.status(401).json({
+      return res.status(403).json({
         success: false,
         message: `User ${req.user.id} is not authorized to update this bootcamp`,
       });
@@ -180,7 +180,7 @@ exports.updateBooking = async (req, res, next) => {
       campground.owner.toString() !== req.user.id &&
       booking.user.toString() !== req.user.id
     ) {
-      return res.status(401).json({
+      return res.status(403).json({
         success: false,
         message: `User ${req.user.id} is not authorized to update this bootcamp`,
       });
@@ -229,7 +229,7 @@ exports.deleteBooking = async (req, res, next) => {
     }
 
     if (req.user.role === "user" && booking.user.toString() !== req.user.id) {
-      return res.status(401).json({
+      return res.status(403).json({
         success: false,
         message: `User ${req.user.id} is not authorized to delete this bootcamp`,
       });
@@ -238,7 +238,7 @@ exports.deleteBooking = async (req, res, next) => {
       campground.owner.toString() !== req.user.id &&
       booking.user.toString() !== req.user.id
     ) {
-      return res.status(401).json({
+      return res.status(403).json({
         success: false,
         message: `User ${req.user.id} is not authorized to delete this bootcamp`,
       });
