@@ -115,9 +115,9 @@ exports.createCamp = async (req, res, next) => {
         await uploadFile(req.file,imageName,req.file.mimetype);
         req.body.picture = imageName;
       }
-  
+
       const camp = await Camp.create(req.body);
-  
+
       res.status(201).json({
         success: true,
         data: camp,
@@ -136,19 +136,19 @@ exports.createCamp = async (req, res, next) => {
 //@access   Private
 exports.updateCamp = async(req,res,next)=>{
     try {
-        
+
         let camp = await Camp.findById(req.params.id);
-        
+
             if(!camp) {
                 return res.status(404).json({
                     success: false,
                     message: `No campground with the id of ${req.params.id}`
                 });
             }
-        
+
             //Make sure user is the booking owner
             if(camp.owner.toString() !== req.user.id && req.user.role !== 'admin') {
-                return res.status(401).json({
+                return res.status(403).json({
                     success: false,
                     message: `User ${req.user.id} is not authorized to update this booking`
                 });
@@ -160,7 +160,7 @@ exports.updateCamp = async(req,res,next)=>{
                 await uploadFile(req.file,imageName,req.file.mimetype);
                 req.body.picture = imageName;
             }
-        
+
         camp = await Camp.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators:true
@@ -191,7 +191,7 @@ exports.deleteCamp = async (req, res, next) => {
 
         // Make sure user is the booking owner
         if ((!camp.owner|| camp.owner.toString() !== req.user.id) && req.user.role !== 'admin') {
-            return res.status(401).json({
+            return res.status(403).json({
                 success: false,
                 message: `User ${req.user.id} is not authorized to delete this campground`
             });
@@ -199,10 +199,10 @@ exports.deleteCamp = async (req, res, next) => {
 
         let deleteImage = camp.picture;
 
-        
+
         await Booking.deleteMany({ camp: req.params.id });
         await Camp.deleteOne({ _id: req.params.id });
-        
+
         if(deleteImage && !deleteImage.startsWith('http')){
             await deleteFile(deleteImage);
         }
@@ -219,4 +219,3 @@ exports.deleteCamp = async (req, res, next) => {
         });
     }
 };
-

@@ -290,12 +290,12 @@ exports.updateAmenityBooking = async (req, res, next) => {
 
     if(req.user.role === 'user' && amenitybooking.userId.toString() !== req.user.id)
     {
-        return res.status(401).json({
+        return res.status(403).json({
             success: false,
             message: `User ${req.user.id} is not authorized to delete this bootcamp`
          });
     }else if(req.user.role === 'owner' && campground.owner.toString() !== req.user.id && amenitybooking.userId.toString() !== req.user.id){
-        return res.status(401).json({
+        return res.status(403).json({
             success: false,
             message: `User ${req.user.id} is not authorized to delete this bootcamp`
         });
@@ -354,12 +354,12 @@ exports.deleteAmenityBooking = async (req, res, next) => {
 
     if(req.user.role === 'user' && amenitybooking.userId.toString() !== req.user.id)
     {
-        return res.status(401).json({
+        return res.status(403).json({
             success: false,
             message: `User ${req.user.id} is not authorized to delete this bootcamp`
          });
     }else if(req.user.role === 'owner' && campground.owner.toString() !== req.user.id && amenitybooking.userId.toString() !== req.user.id){
-        return res.status(401).json({
+        return res.status(403).json({
             success: false,
             message: `User ${req.user.id} is not authorized to delete this bootcamp`
         });
@@ -411,12 +411,12 @@ exports.deleteAmenityBookingByBookingId = async (req, res, next) => {
 
     if(req.user.role === 'user' && amenitybooking[0].userId.toString() !== req.user.id)
     {
-        return res.status(401).json({
+        return res.status(403).json({
             success: false,
             message: `User ${req.user.id} is not authorized to delete this bootcamp`
          });
     }else if(req.user.role === 'owner' && campground.owner.toString() !== req.user.id && amenitybooking[0].userId.toString() !== req.user.id){
-        return res.status(401).json({
+        return res.status(403).json({
             success: false,
             message: `User ${req.user.id} is not authorized to delete this bootcamp`
         });

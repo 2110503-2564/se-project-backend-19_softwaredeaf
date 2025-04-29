@@ -162,7 +162,7 @@ paths:
                 $ref: '#/components/schemas/Camp'
         '404':
           description: Campground not found
-        '401':
+        '403':
           description: This user is not authorized to update this campground
         '400':
           description: Fail to update campground
@@ -184,7 +184,7 @@ paths:
           description: success
         '404':
           description: Campground not found
-        '401':
+        '403':
           description: This user is not authorized to delete this campground
         '400':
           description: Something went wrong

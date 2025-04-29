@@ -125,7 +125,7 @@ paths:
                 $ref: '#/components/schemas/Booking'
         '404':
           description: Booking not found
-        '401':
+        '403':
           description: This user is not authorized to update this booking
         '500':
           description: Something went wrong
@@ -147,7 +147,7 @@ paths:
           description: success
         '404':
           description: Booking not found
-        '401':
+        '403':
           description: This user is not authorized to delete this booking
         '500':
           description: Something went wrong

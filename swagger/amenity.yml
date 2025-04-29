@@ -98,7 +98,7 @@ paths:
       responses:
         '201':
           description: Amenity created
-        '401':
+        '403':
           description: User is not authorized
         '400':
           description: Fail to create amenity / bad request
@@ -133,7 +133,7 @@ paths:
           description: Amenity not found
         '400':
           description: Fail to update amenity / bad request
-        '401':
+        '403':
           description: User is not authorized
 
     delete:

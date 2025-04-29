@@ -41,7 +41,7 @@ exports.addAmenities = async (req, res, next) => {
     const camp = await Camp.findById(campId);
     const owner = camp.owner;
     if (owner.toString() !== req.user.id && req.user.role !== "admin") {
-      return res.status(401).json({
+      return res.status(403).json({
         success: false,
         message: `User ${req.user.id} is not authorized to add this amenity`,
       });
@@ -74,7 +74,7 @@ exports.updateAmenity = async (req, res, next) => {
     const camp = await Camp.findById(campId);
     const owner = camp.owner;
     if (owner.toString() !== req.user.id && req.user.role !== "admin") {
-      return res.status(401).json({
+      return res.status(403).json({
         success: false,
         message: `User ${req.user.id} is not authorized to add this amenity`,
       });
@@ -129,7 +129,7 @@ exports.deleteAmenity = async (req, res, next) => {
     const camp = await Camp.findById(campId);
     const owner = camp.owner;
     if (owner.toString() !== req.user.id && req.user.role !== "admin") {
-      return res.status(401).json({
+      return res.status(403).json({
         success: false,
         message: `User ${req.user.id} is not authorized to add this amenity`,
       });
@@ -147,7 +147,7 @@ exports.deleteAmenity = async (req, res, next) => {
     if(amenity.image){
       imagename = amenity.image;
     }
-    
+
     await Amenity.deleteOne({ _id: req.params.id });
 
     if(imagename){
