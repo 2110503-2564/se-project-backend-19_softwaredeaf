@@ -213,7 +213,7 @@ exports.reportReview = async (req, res, next) => {
 
     review.status.reported = req.body.status.reported;
     review.report.reason = req.body.report.reason;
-    review.report.otherReasonText = req.body.otherReasonText
+    review.report.otherReasonText = req.body.report.otherReasonText
 
     review.save();
 
@@ -312,6 +312,7 @@ exports.getUserReports = async (req, res, next) => {
     for (let eachReview of campReview) {
       if (
         eachReview.pictures &&
+        eachReview.pictures.length > 0 &&
         !eachReview.pictures[0].startsWith("http")
       ) {
         let pictures = [];

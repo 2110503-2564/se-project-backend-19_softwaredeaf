@@ -48,6 +48,7 @@ components:
                 - spam
                 - inappropriate
                 - fake
+                - offensive Language
                 - other
             otherReasonText:
               type: string
