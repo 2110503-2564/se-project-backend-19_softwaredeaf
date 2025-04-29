@@ -13,5 +13,4 @@ router
   .route("/:id")
   .put(protect,authorize("admin","owner"),reportReview);
 
-
 module.exports = router;

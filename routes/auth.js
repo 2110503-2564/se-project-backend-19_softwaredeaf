@@ -1,4 +1,3 @@
-
 const express = require('express');
 const {register, login, getMe, logout} = require('../controllers/auth');
 

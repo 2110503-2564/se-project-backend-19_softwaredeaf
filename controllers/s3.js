@@ -62,7 +62,7 @@ function generateFileName(bytes = 32) {
   return crypto.randomBytes(bytes).toString('hex');
 }
 
-// 👇 CommonJS export
+// CommonJS export
 module.exports = {
   uploadFile,
   deleteFile,

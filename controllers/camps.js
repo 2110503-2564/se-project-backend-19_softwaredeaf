@@ -13,7 +13,6 @@ exports.getCamps = async (req, res, next) => {
     const removeFields = ['select', 'sort', 'page', 'limit'];
     removeFields.forEach(param => delete reqQuery[param]);
 
-    // 👉 เงื่อนไขนี้จะกรองเฉพาะเจ้าของเท่านั้น
     if (req.user && req.user.role === 'owner') {
         reqQuery.owner = req.user.id;
     }
@@ -78,8 +77,6 @@ exports.getCamps = async (req, res, next) => {
         res.status(400).json({ success: false });
     }
 };
-
-
 
 //@desc     Get single camps
 //@route    GET /api/v1/camps/:id

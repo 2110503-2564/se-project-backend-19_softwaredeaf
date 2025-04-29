@@ -1,12 +1,11 @@
 const Amenity = require("../models/CampgroundAmenity");
-const mongoose = require("mongoose"); // Import mongoose for error checking
+const mongoose = require("mongoose");
 const Camp = require("../models/Camp");
 const { getObjectSignedUrl, uploadFile, generateFileName, deleteFile } = require("./s3");
 
 // @desc    Get all campground amenity
 // @route   GET /api/v1/camps/:campId/amenities
 // @access  Public
-
 exports.getAmenity = async (req, res, next) => {
   try {
     const campId = req.params.campId;
@@ -32,7 +31,6 @@ exports.getAmenity = async (req, res, next) => {
     });
   }
 };
-
 
 // @desc    Create new campground amenity
 // @route   POST /api/v1/camps/:campId/amenities
@@ -70,7 +68,6 @@ exports.addAmenities = async (req, res, next) => {
 // @desc    Update amenities
 // @route   PUT /api/v1/camps/:campId/amenities
 // @access  Private
-
 exports.updateAmenity = async (req, res, next) => {
   try {
     const campId = req.params.campId;
@@ -123,7 +120,6 @@ exports.updateAmenity = async (req, res, next) => {
 // @desc    Delete amenities
 // @route   DELETE /api/v1/camps/:campId/amenities
 // @access  Private
-
 exports.deleteAmenity = async (req, res, next) => {
   try {
     const campId = req.params.campId;

@@ -50,7 +50,6 @@ exports.getReview = async (req, res, next) => {
   }
 };
 
-
 // @desc Get all reviews of the camp with the given ID
 // @route   GET /api/v1/campreviews/:id
 // @access  Public
@@ -136,7 +135,6 @@ exports.createReview = async (req, res, next) => {
 // @desc    Update a review by ID
 // @route   PUT /api/v1/reviews/:id
 // @access  Private
-
 exports.updateReview = async (req, res, next) => {
   try {
     const review = await Review.findById(req.params.id);

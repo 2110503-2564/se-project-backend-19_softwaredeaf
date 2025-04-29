@@ -21,5 +21,4 @@ router
   .delete(protect, authorize("user", "admin"), deleteReview)
   .put(protect, authorize("user", "owner", "admin"),upload.array('images',3), updateReview);
 
-
 module.exports = router;

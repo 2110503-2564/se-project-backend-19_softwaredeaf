@@ -12,5 +12,4 @@ router
   .route("/:id")
   .get(protect, authorize("user", "owner", "admin"), getReview)
 
-
 module.exports = router;
