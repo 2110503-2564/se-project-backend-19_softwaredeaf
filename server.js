@@ -53,7 +53,7 @@ const swaggerOptions={
   swaggerDefinition:{
     openapi: '3.0.0',
     info: {
-      title: 'Library API',
+      title: 'Wander API',
       version: '1.0.0',
       description: 'Campground booking system API by softwaredeaf team'
     },
