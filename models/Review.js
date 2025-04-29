@@ -57,11 +57,11 @@ const campgroundReviewSchema = new mongoose.Schema({
   report: {
     reason: {
       type: String,
-      enum: ['spam', 'inappropriate', 'fake', 'other'],
+      enum: ['spam', 'inappropriate', 'fake', 'other', 'offensive Language'],
     },
     otherReasonText: {
       type: String,
-      maxlenght: 200,
+      maxlength: 200,
       required: function () {
         return this.report?.reason === 'other';
       },
