@@ -46,13 +46,14 @@ exports.getCamps = async (req, res, next) => {
         const camps = await query;
 
         const pagination = {};
+        
         if (endIndex < total) {
             pagination.next = {
                 page: page + 1,
                 limit
             };
         }
-
+        
         if (startIndex > 0) {
             pagination.prev = {
                 page: page - 1,
@@ -88,11 +89,11 @@ exports.getCamp = async(req,res,next)=>{
         if(!camp) {
             return res.status(404).json({success:false});
         }
-
+        
         if(camp.picture && !camp.picture.startsWith('http')){
             camp.picture = await getObjectSignedUrl(camp.picture);
         }
-
+        
         res.status(200).json({
             success:true,
             data:camp

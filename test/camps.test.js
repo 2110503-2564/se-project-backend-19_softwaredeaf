@@ -56,7 +56,32 @@ describe('Camp Controller', () => {
       Camp.countDocuments.mockResolvedValue(30);
       getObjectSignedUrl.mockResolvedValue('https://signed-url.com/pic.jpg');
     });
-  
+    
+    test('should transform query operators (gt, gte, lt, lte, in) correctly', async () => {
+      req = mockReq({
+        query: {
+          price: { gt: '100' },
+          rating: { gte: '4' }
+        },
+        user: null
+      });
+      res = mockRes();
+    
+      queryMock.populate.mockReturnThis();
+      queryMock.sort.mockReturnThis();
+      queryMock.skip.mockReturnThis();
+      queryMock.limit.mockResolvedValue([]);
+    
+      await getCamps(req, res);
+    
+      expect(Camp.find).toHaveBeenCalledWith(
+        expect.objectContaining({
+          price: expect.objectContaining({ $gt: '100' }),
+          rating: expect.objectContaining({ $gte: '4' })
+        })
+      );
+    });
+
     test('should return filtered camps for owner with select and sort', async () => {
       req.query = {
         select: 'name,location',
